@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://newpants.top/"/>
-  <updated>2019-08-30T02:54:29.830Z</updated>
+  <updated>2019-08-30T03:09:15.120Z</updated>
   <id>http://newpants.top/</id>
   
   <author>
@@ -21,15 +21,15 @@
     <link href="http://newpants.top/2019/08/30/photo/"/>
     <id>http://newpants.top/2019/08/30/photo/</id>
     <published>2019-08-30T02:52:17.000Z</published>
-    <updated>2019-08-30T02:54:29.830Z</updated>
+    <updated>2019-08-30T03:09:15.120Z</updated>
     
-    <content type="html"><![CDATA[<p><img src="F:%5CBlog%5CHexo%5Csource_posts%5Celk.png" alt="test"></p>]]></content>
+    <content type="html"><![CDATA[<p><img src="/2019/08/30/photo/elk.png" alt="test"></p>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;p&gt;&lt;img src=&quot;F:%5CBlog%5CHexo%5Csource_posts%5Celk.png&quot; alt=&quot;test&quot;&gt;&lt;/p&gt;
+        &lt;p&gt;&lt;img src=&quot;/2019/08/30/photo/elk.png&quot; alt=&quot;test&quot;&gt;&lt;/p&gt;
 
       
     

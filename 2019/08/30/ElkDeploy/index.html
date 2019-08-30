@@ -60,13 +60,13 @@
   };
 </script>
 
-  <meta name="description" content="这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。** 每种程序的单独介绍可在以下查看（常用的一些配置和概念）： elasticsearch介绍及配置说明(待更新) logstash介绍配置说明(待更新) kibana介绍及配置说明(待更新) filebeat介绍及配置说明(待更新) elastic官方文档地址   #官方文档说明的都很详细">
+  <meta name="description" content="这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。">
 <meta name="keywords" content="elasticsearch,logstash,kibana,filebeat">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ELK+filebeat日志采集（搭建篇）">
 <meta property="og:url" content="http://newpants.top/2019/08/30/ElkDeploy/index.html">
 <meta property="og:site_name" content="NewPants">
-<meta property="og:description" content="这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。** 每种程序的单独介绍可在以下查看（常用的一些配置和概念）： elasticsearch介绍及配置说明(待更新) logstash介绍配置说明(待更新) kibana介绍及配置说明(待更新) filebeat介绍及配置说明(待更新) elastic官方文档地址   #官方文档说明的都很详细">
+<meta property="og:description" content="这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/elastic_top.png">
 <meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/Architecture_diagram.png">
@@ -75,10 +75,10 @@
 <meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/logstash-input.png">
 <meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/logstash-output.png">
 <meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/kibana_index.png">
-<meta property="og:updated_time" content="2019-08-30T09:31:32.843Z">
+<meta property="og:updated_time" content="2019-08-30T10:02:53.893Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ELK+filebeat日志采集（搭建篇）">
-<meta name="twitter:description" content="这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。** 每种程序的单独介绍可在以下查看（常用的一些配置和概念）： elasticsearch介绍及配置说明(待更新) logstash介绍配置说明(待更新) kibana介绍及配置说明(待更新) filebeat介绍及配置说明(待更新) elastic官方文档地址   #官方文档说明的都很详细">
+<meta name="twitter:description" content="这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。">
 <meta name="twitter:image" content="http://newpants.top/2019/08/30/ElkDeploy/elastic_top.png">
   <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
   <link rel="canonical" href="http://newpants.top/2019/08/30/ElkDeploy/">
@@ -297,7 +297,7 @@
                 
               
 
-              <time title="创建时间：2019-08-30 11:14:03 / 修改时间：17:31:32" itemprop="dateCreated datePublished" datetime="2019-08-30T11:14:03+08:00">2019-08-30</time>
+              <time title="创建时间：2019-08-30 11:14:03 / 修改时间：18:02:53" itemprop="dateCreated datePublished" datetime="2019-08-30T11:14:03+08:00">2019-08-30</time>
             </span>
           
             
@@ -349,7 +349,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>5.8k</span>
+              <span>5.7k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -373,15 +373,15 @@
 
       
         <p><img src="/2019/08/30/ElkDeploy/elastic_top.png" alt></p>
-<p>这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。**</p>
+<p>这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。</p>
+<a id="more"></a>
+
 <p><strong>每种程序的单独介绍可在以下查看（常用的一些配置和概念）：</strong></p>
 <p><strong><a href>elasticsearch介绍及配置说明(待更新)</a></strong></p>
 <p><strong><a href>logstash介绍配置说明(待更新)</a></strong></p>
 <p><strong><a href>kibana介绍及配置说明(待更新)</a></strong></p>
 <p><strong><a href>filebeat介绍及配置说明(待更新)</a></strong></p>
 <p><a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">elastic官方文档地址</a>   #官方文档说明的都很详细</p>
-<a id="more"></a>
-
 <h3 id="1-基本架构图"><a href="#1-基本架构图" class="headerlink" title="1.基本架构图"></a>1.基本架构图</h3><p><img src="/2019/08/30/ElkDeploy/Architecture_diagram.png" alt></p>
 <p>elasticsearch： 一款基于 Lucene 的搜索服务器。可以理解为数据库，我们日后将要采集的日志都将储存在这里。</p>
 <p>logstash： logstash 的主要功能是将数据按照我们的要求进行过滤和筛选。完成我们制定的工作发送给 elasticsearch 后以便我们查询。</p>
@@ -435,7 +435,6 @@
 <p>如果类似消息输出到屏幕则正常：</p>
 <p><img src="/2019/08/30/ElkDeploy/logstash-output.png" alt></p>
 <p>此时我们还没有用 filebeat 来收集日志，所以也没有生成对应的索引。故此时看到的都是空的。接来下就介绍在需要采集的机器上安装 filebeat 采集日志。</p>
-<p>### </p>
 <h3 id="5-安装-filebeat"><a href="#5-安装-filebeat" class="headerlink" title="5. 安装 filebeat"></a>5. 安装 filebeat</h3><p>在目标采集机器上安装filebeat。因采集机器不同，分为 linux 和 windows 。</p>
 <p>linux：</p>
 <p>安装方式：RPM安装</p>
@@ -728,7 +727,6 @@
   
 
 
-  <script size="300" alpha="0.6" zIndex="-1" src="/lib/canvas-ribbon/canvas-ribbon.js"></script>
   <script src="/lib/anime.min.js?v=3.1.0"></script>
   <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
   <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>

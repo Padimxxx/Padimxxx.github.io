@@ -60,20 +60,23 @@
   };
 </script>
 
-  <meta name="description" content="生命因你而火热">
-<meta name="keywords" content="pants">
+  <meta name="description" content="1.filebeat介绍filebeat 是 elastic beats 中的一个轻量型的采集器。beats 包含很多系列，如官网下图：">
+<meta name="keywords" content="filebeat">
 <meta property="og:type" content="article">
-<meta property="og:title" content="new pants">
-<meta property="og:url" content="http://newpants.top/2019/08/28/new-pants/index.html">
+<meta property="og:title" content="filebeat.yml配置详解">
+<meta property="og:url" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/index.html">
 <meta property="og:site_name" content="NewPants">
-<meta property="og:description" content="生命因你而火热">
+<meta property="og:description" content="1.filebeat介绍filebeat 是 elastic beats 中的一个轻量型的采集器。beats 包含很多系列，如官网下图：">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-30T07:20:35.984Z">
+<meta property="og:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/beats.png">
+<meta property="og:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/wwwcache_kibana.png">
+<meta property="og:updated_time" content="2019-09-06T08:54:10.601Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="new pants">
-<meta name="twitter:description" content="生命因你而火热">
+<meta name="twitter:title" content="filebeat.yml配置详解">
+<meta name="twitter:description" content="1.filebeat介绍filebeat 是 elastic beats 中的一个轻量型的采集器。beats 包含很多系列，如官网下图：">
+<meta name="twitter:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/beats.png">
   <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
-  <link rel="canonical" href="http://newpants.top/2019/08/28/new-pants/">
+  <link rel="canonical" href="http://newpants.top/2019/09/06/filebeat-yml配置详解/">
 
 
 <script id="page-configurations">
@@ -87,7 +90,7 @@
   };
 </script>
 
-  <title>new pants | NewPants</title>
+  <title>filebeat.yml配置详解 | NewPants</title>
   <meta name="generator" content="Hexo 3.9.0">
   
 
@@ -261,7 +264,7 @@
   
   
   <div class="post-block post">
-    <link itemprop="mainEntityOfPage" href="http://newpants.top/2019/08/28/new-pants/">
+    <link itemprop="mainEntityOfPage" href="http://newpants.top/2019/09/06/filebeat-yml配置详解/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="未完成">
@@ -273,7 +276,7 @@
       <meta itemprop="name" content="NewPants">
     </span>
       <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">new pants
+        <h1 class="post-title" itemprop="name headline">filebeat.yml配置详解
 
           
         </h1>
@@ -289,19 +292,11 @@
                 
               
 
-              <time title="创建时间：2019-08-28 16:39:41" itemprop="dateCreated datePublished" datetime="2019-08-28T16:39:41+08:00">2019-08-28</time>
+              <time title="创建时间：2019-09-06 16:16:36 / 修改时间：16:54:10" itemprop="dateCreated datePublished" datetime="2019-09-06T16:16:36+08:00">2019-09-06</time>
             </span>
           
             
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-08-30 15:20:35" itemprop="dateModified" datetime="2019-08-30T15:20:35+08:00">2019-08-30</time>
-              </span>
             
           
             <span class="post-meta-item">
@@ -310,7 +305,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/other/" itemprop="url" rel="index"><span itemprop="name">other</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ELK日志采集/" itemprop="url" rel="index"><span itemprop="name">ELK日志采集</span></a></span>
 
                 
                 
@@ -337,7 +332,7 @@
       
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2019/08/28/new-pants/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2019/08/28/new-pants/" itemprop="commentCount"></span></a>
+    <a title="valine" href="/2019/09/06/filebeat-yml配置详解/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2019/09/06/filebeat-yml配置详解/" itemprop="commentCount"></span></a>
   </span>
   
   
@@ -349,7 +344,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>7</span>
+              <span>2.5k</span>
             </span>
           
             <span class="post-meta-item" title="阅读时长">
@@ -359,7 +354,7 @@
               
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
               
-              <span>1 分钟</span>
+              <span>2 分钟</span>
             </span>
           
 
@@ -372,7 +367,33 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>生命因你而火热</p>
+        <h4 id="1-filebeat介绍"><a href="#1-filebeat介绍" class="headerlink" title="1.filebeat介绍"></a>1.filebeat介绍</h4><p>filebeat 是 elastic beats 中的一个轻量型的采集器。beats 包含很多系列，如官网下图：</p>
+<p><img src="/2019/09/06/filebeat-yml配置详解/beats.png" alt="beat系列"></p>
+<a id="more"></a>
+
+<p>基本从名字就可以看得出来其对应的功能。这里我们使用 filebeat 主要针对文件（也就是需要采集的log日志) 来进行采集。</p>
+<p>filebeat 的原理是开启一个 prospectors(收割者)，对文件逐行进行采集。</p>
+<h4 id="2-示例文件及配置解析"><a href="#2-示例文件及配置解析" class="headerlink" title="2.示例文件及配置解析"></a>2.示例文件及配置解析</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">filebeat.prospectors:</span>			<span class="comment">#采集 abc.com 下 nginx 的 access 日志 </span></span><br><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwlog/nginx/abc.com.access.log</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["nginx_access"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
+
+<p>filebeat.prospectors:        文件开头指定 filebeat 的采集方式，此处使用 prospectors</p>
+<p>type : log                             类型为：log</p>
+<p>enabled: true                     true 为开启，false 为关闭</p>
+<p>paths:                                 指定路径</p>
+<p>tags:                                    打标签，自定义名称，为后续在kibana查看时提供过滤与分类的效果</p>
+<p>tail_files: true                     开启此项，代表采集从文件最底部开始，选择 false 时 filebeat 会从文件头部开始采集</p>
+<p>scan_frequency: 30s         对文件的扫描间隔（每30秒扫描一次文件是否改动）</p>
+<p>fields:                                  添加字段（用于 elasticsearch 过滤、分类，以及 kibana 中查看）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span>					<span class="comment">#采集 abc.com 下 nginx 的 error 日志</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwlog/nginx/abc.com.error.log</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["nginx_error"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span>					<span class="comment">#采集 abc.com 下 nginx 的 cache 日志</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwcache/abc.com.cache/application.log</span></span><br><span class="line">  <span class="string">multiline.pattern:</span> <span class="string">'^[0-9]&#123;4&#125;/[0-9]&#123;2&#125;/[0-9]&#123;2&#125;'</span></span><br><span class="line">  <span class="string">multiline.negate:</span> <span class="literal">true</span></span><br><span class="line">  <span class="string">multiline.match:</span> <span class="string">after</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["wwwcache"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
+
+<p>  multiline.pattern: ‘^[0-9]{4}/[0-9]{2}/[0-9]{2}’<br>  multiline.negate: true<br>  multiline.match: after</p>
+<p>以上通过正规表达式，对日志多行进行合并。如下图效果(根据实际情况配置正规表达式，可对任意行进行合并保存在一个 message 中)：</p>
+<p>cache 中日志不需要逐行采集，需要采集某一段</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>2 /data/server/wwwroot/tui.tongbu.com/index.php(28): CApplication-&gt;run()</span><br><span class="line"><span class="meta">#</span>3 &#123;main&#125;</span><br><span class="line">REQUEST_URI=/apple-touch-icon-120x120-precomposed.png</span><br><span class="line">---</span><br><span class="line">2019/09/06 16:47:32 [error] [exception.CHttpException.404] CHttpException: Unable to resolve the request "apple-touch-icon-120x120.png". in /data/server/wwwroot/yii/framework/web/CWebApplication.php:286</span><br><span class="line">Stack trace:</span><br><span class="line"><span class="meta">#</span>0 /data/server/wwwroot/yii/framework/web/CWebApplication.php(141): CWebApplication-&gt;runController('apple-touch-ico...')</span><br><span class="line"><span class="meta">#</span>1 /data/server/wwwroot/yii/framework/base/CApplication.php(185): CWebApplication-&gt;processRequest()</span><br><span class="line"><span class="meta">#</span>2 /data/server/wwwroot/tui.tongbu.com/index.php(28): CApplication-&gt;run()</span><br><span class="line"><span class="meta">#</span>3 &#123;main&#125;</span><br><span class="line">REQUEST_URI=/apple-touch-icon-120x120.png</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
+
+<p>增加正规表达式后：</p>
+<p><img src="/2019/09/06/filebeat-yml配置详解/wwwcache_kibana.png" alt="合并多行日志"></p>
 
     </div>
 
@@ -389,7 +410,7 @@
     <strong>本文作者： </strong>未完成</li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://newpants.top/2019/08/28/new-pants/" title="new pants">http://newpants.top/2019/08/28/new-pants/</a>
+    <a href="http://newpants.top/2019/09/06/filebeat-yml配置详解/" title="filebeat.yml配置详解">http://newpants.top/2019/09/06/filebeat-yml配置详解/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
@@ -404,7 +425,7 @@
           
           <div class="post-tags">
             
-              <a href="/tags/pants/" rel="tag"><i class="fa fa-tag"></i> pants</a>
+              <a href="/tags/filebeat/" rel="tag"><i class="fa fa-tag"></i> filebeat</a>
             
           </div>
         
@@ -414,15 +435,15 @@
           <div class="post-nav">
             <div class="post-nav-next post-nav-item">
               
+                <a href="/2019/08/30/ElkDeploy/" rel="next" title="ELK+filebeat日志采集（搭建篇）">
+                  <i class="fa fa-chevron-left"></i> ELK+filebeat日志采集（搭建篇）
+                </a>
+              
             </div>
 
             <span class="post-nav-divider"></span>
 
             <div class="post-nav-prev post-nav-item">
-              
-                <a href="/2019/08/30/ElkDeploy/" rel="prev" title="ELK+filebeat日志采集（搭建篇）">
-                  ELK+filebeat日志采集（搭建篇） <i class="fa fa-chevron-right"></i>
-                </a>
               
             </div>
           </div>
@@ -474,6 +495,8 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-filebeat介绍"><span class="nav-number">1.</span> <span class="nav-text">1.filebeat介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-示例文件及配置解析"><span class="nav-number">2.</span> <span class="nav-text">2.示例文件及配置解析</span></a></li></ol></div>
+        
       </div>
       <!--/noindex-->
 

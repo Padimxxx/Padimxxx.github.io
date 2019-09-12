@@ -1,4 +1,791 @@
-<!-- build time:Thu Sep 12 2019 13:25:17 GMT+0800 (GMT+08:00) --><!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=2"><meta name="theme-color" content="#222"><meta http-equiv="X-UA-Compatible" content="IE=edge"><link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0"><link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0"><link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0"><link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><link rel="stylesheet" href="/css/main.css?v=7.3.0"><link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0"><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css"><link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css?v=1.0.2"><script src="/lib/pace/pace.min.js?v=1.0.2"></script><script id="hexo-configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Mist",version:"7.3.0",exturl:!1,sidebar:{position:"left",display:"post",offset:12,onmobile:!0,dimmer:!0},copycode:{enable:!0,show_result:!0,style:"default"},back2top:{enable:!0,sidebar:!0,scrollpercent:!0},bookmark:{enable:!1,color:"#222",save:"auto"},fancybox:!0,mediumzoom:!1,lazyload:!0,pangu:!0,algolia:{appID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}},localsearch:{enable:!0,trigger:"auto",top_n_per_article:1,unescape:!1,preload:!1},path:"search.xml",motion:{enable:!0,async:!1,transition:{post_block:"fadeIn",post_header:"slideDownIn",post_body:"slideDownIn",coll_header:"slideLeftIn",sidebar:"slideUpIn"}},translation:{copy_button:"复制",copy_success:"复制成功",copy_failure:"复制失败"},sidebarPadding:40}</script><meta name="description" content="ELK+filebeat日志采集（搭建篇）"><meta name="keywords" content="filebeat,elasticsearch,logstash,kibana"><meta property="og:type" content="article"><meta property="og:title" content="ELK+filebeat日志采集（搭建篇）"><meta property="og:url" content="http://newpants.top/2019/08/30/ElkDeploy/index.html"><meta property="og:site_name" content="NewPants"><meta property="og:description" content="ELK+filebeat日志采集（搭建篇）"><meta property="og:locale" content="zh-CN"><meta property="og:updated_time" content="2019-09-12T02:39:54.788Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="ELK+filebeat日志采集（搭建篇）"><meta name="twitter:description" content="ELK+filebeat日志采集（搭建篇）"><link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml"><link rel="canonical" href="http://newpants.top/2019/08/30/ElkDeploy/"><script id="page-configurations">CONFIG.page={sidebar:"",isHome:!1,isPost:!0,isPage:!1,isArchive:!1}</script><title>ELK+filebeat日志采集（搭建篇） | NewPants</title><meta name="generator" content="Hexo 3.9.0"><noscript><style>.sidebar-inner,.use-motion .brand,.use-motion .collection-header,.use-motion .comments,.use-motion .menu-item,.use-motion .pagination,.use-motion .post-block,.use-motion .post-body,.use-motion .post-header{opacity:initial}.use-motion .logo,.use-motion .site-subtitle,.use-motion .site-title{opacity:initial;top:initial}.use-motion .logo-line-before i{left:initial}.use-motion .logo-line-after i{right:initial}</style></noscript></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN"><div class="container use-motion"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-container"><div class="site-meta"><div><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">NewPants</span> <span class="logo-line-after"><i></i></span></a></div></div><div class="site-nav-toggle"><button aria-label="切换导航栏"><span class="btn-bar"></span> <span class="btn-bar"></span> <span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br>归档</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br>分类</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br>关于</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br>搜索</a></li></ul></nav><div class="site-search"><div class="popup search-popup"><div class="search-header"><span class="search-icon"><i class="fa fa-search"></i></span><div class="search-input-container"><input autocomplete="off" autocorrect="off" autocapitalize="none" placeholder="搜索..." spellcheck="false" type="text" id="search-input"></div><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span></div><div id="search-result"></div></div><div class="search-pop-overlay"></div></div></div></header><a href="https://github.com/padimxxx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin:130px 106px" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article itemscope itemtype="http://schema.org/Article"><div class="post-block post"><link itemprop="mainEntityOfPage" href="http://newpants.top/2019/08/30/ElkDeploy/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="未完成"><meta itemprop="description" content="数えた日の夢からさよならが"><meta itemprop="image" content="/images/dogman.png"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="NewPants"></span><header class="post-header"><h2 class="post-title" itemprop="name headline">ELK+filebeat日志采集（搭建篇）</h2><div class="post-meta"><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i> </span><span class="post-meta-item-text">发表于</span> <time title="创建时间：2019-08-30 11:14:03" itemprop="dateCreated datePublished" datetime="2019-08-30T11:14:03+08:00">2019-08-30</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-calendar-check-o"></i> </span><span class="post-meta-item-text">更新于</span> <time title="修改时间：2019-09-12 10:39:54" itemprop="dateModified" datetime="2019-09-12T10:39:54+08:00">2019-09-12</time> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i> </span><span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ELK/" itemprop="url" rel="index"><span itemprop="name">ELK</span></a></span> </span><span id="/2019/08/30/ElkDeploy/" class="post-meta-item leancloud_visitors" data-flag-title="ELK+filebeat日志采集（搭建篇）" title="阅读次数"><span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="post-meta-item-text">阅读次数：</span> <span class="leancloud-visitors-count"></span> </span><span class="post-meta-item"><span class="post-meta-item-icon"><i class="fa fa-comment-o"></i> </span><span class="post-meta-item-text">Valine：</span> <a title="valine" href="/2019/08/30/ElkDeploy/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2019/08/30/ElkDeploy/" itemprop="commentCount"></span></a></span> <span class="post-meta-item" title="本文字数"><span class="post-meta-item-icon"><i class="fa fa-file-word-o"></i> </span><span class="post-meta-item-text">本文字数：</span> <span>5.8k</span></span></div></header><div class="post-body" itemprop="articleBody"><p>ELK+filebeat日志采集（搭建篇）</p><a id="more"></a><p><img alt data-src="/ElkDeploy/elastic_top.png"></p><p>这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。</p><p><strong>每种程序的单独介绍可在以下查看（常用的一些配置和概念）：</strong></p><p><strong><a href>elasticsearch介绍及配置说明(待更新)</a></strong></p><p><strong><a href>logstash介绍配置说明(待更新)</a></strong></p><p><strong><a href>kibana介绍及配置说明(待更新)</a></strong></p><p><strong><a href="https://newpants.top/2019/09/06/filebeat-yml配置详解">filebeat介绍及配置说明(待更新)</a></strong></p><p><a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">elastic官方文档地址</a> #官方文档说明的都很详细</p><h3 id="1-基本架构图"><a href="#1-基本架构图" class="headerlink" title="1.基本架构图"></a>1.基本架构图</h3><p><img alt data-src="/ElkDeploy/Architecture_diagram.png"></p><p>elasticsearch： 一款基于 Lucene 的搜索服务器。可以理解为数据库，我们日后将要采集的日志都将储存在这里。</p><p>logstash： logstash 的主要功能是将数据按照我们的要求进行过滤和筛选。完成我们制定的工作发送给 elasticsearch 后以便我们查询。</p><p>kibana： 基于web的查看页面。已经开始提供越来越多的 api。以前的 elasticsearch 还需要 elasticsearch-head 或者直接服务器上面进行操作和查询。现 kibana 的控制台基本可以满足大部分需求。</p><p>filebeat： 采集工具。因为 logstash 非常的消耗系统资源，为了不影响业务服务器，使用 filebeat ，他非常轻量。基本不占用什么空间和系统资源。</p><p>大致流程：filebeat（采集）–&gt; logstash（过滤）–&gt; elasticsearch（储存）–&gt; kibana(查看)</p><h3 id="2-此例版本号说明"><a href="#2-此例版本号说明" class="headerlink" title="2.此例版本号说明"></a>2.此例版本号说明</h3><table><thead><tr><th>软件</th><th>Java</th><th>Elasticsearch</th><th>Logstash</th><th>Kibana</th><th>Filebeat</th></tr></thead><tbody><tr><td>版本号</td><td>1.8.0_181</td><td>6.7.1</td><td>6.7.1</td><td>6.7.1</td><td>6.7.1</td></tr></tbody></table><p>因为采集量不大，且公司内部部分需求。所以此篇文章是在一台centos7服务器上搭建elasticsearch+logstash+kibana 。其他需要采集的机器上安装 filebeat 进行采集。</p><p>这里需要注意的是，elasticsearch 和 logstash 需要在 java 环境下运行。</p><p><strong>以下安装过程简单带过，网上已经有了很多，遇到问题可以简单进行百度分析。（官方建议最好保持elk+filebeat版本一致性，以避免不可预估的情况发生）</strong></p><h3 id="3-JAVA-环境配置"><a href="#3-JAVA-环境配置" class="headerlink" title="3. JAVA 环境配置"></a>3. JAVA 环境配置</h3><p>此例使用压缩包形式安装，在<a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">orcale官网jdk下载</a>，按照需求选择需要下载的jdk版本，此例使用 jdk-8u201-linux-x64.tar.gz</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tar -xvzf jdk-8u201-linux-x64.tar.gz     #解压</span><br><span class="line">mv jdk1.8.0_201/ /usr/jdk1.8.0_201       #移动解压包至/usr下</span><br><span class="line"></span><br><span class="line">vim /etc/profile					     #编辑系统配置文件，添加 如下java 环境变量</span><br><span class="line">export JAVA_HOME=/usr/jdk1.8.0_201  #如果不生效，在jdk1.8.0_201加“/”，目录按照实际情况</span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">export PATH=$PATH:$JAVA_HOME/bin</span><br><span class="line"></span><br><span class="line">source /etc/profile                       #重新加载环境变量</span><br><span class="line">java -version                              #验证</span><br></pre></td></tr></table></figure><h3 id="4-RPM形式安装elk"><a href="#4-RPM形式安装elk" class="headerlink" title="4.RPM形式安装elk"></a>4.RPM形式安装elk</h3><p>在elastic官网：<a href="https://www.elastic.co/cn/" target="_blank" rel="noopener">elastic官网</a>，找到产品相应的下载页面。下载rpm包（当然也可以使用yum或者压缩包形式安装，个人认为rpm比较方便，关键在于可以统一版本）</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh elasticsearch-6.7.1-x86_64.rpm</span><br><span class="line">rpm -ivh logstash-6.7.1.rpm</span><br><span class="line">rpm -ivh kibana-6.7.1-x86_64.rpm</span><br></pre></td></tr></table></figure><p>因资源有限且需求量不大，故本例三种程序都安装在一台 linux centos7 上。安装完成后，查看程序是否正常启动即可。启动顺序最好按照：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl start elasticsearch</span><br><span class="line">systemctl start logstash</span><br><span class="line">systemctl start kibana</span><br></pre></td></tr></table></figure><p>查看是否安装并启动成功</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">netstat -tunlp | grep 9200     #elasticsearch默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp6     0      0  127.0.0.1:9200          :::*                LISTEN      12427/java</span><br><span class="line"></span><br><span class="line">netstat -tunlp | grep 9600		#logstash默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp6     0      0  127.0.0.1:9600          :::*                LISTEN      17905/java</span><br><span class="line"></span><br><span class="line">netstat -tunlp | grep 5601		#kibana默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp     0      0   127.0.0.1:5601          :::*                LISTEN      4666/node</span><br></pre></td></tr></table></figure><p>此时通过浏览器访问 127.0.0.1:9200 返回类似如下页面，证明 elasticsearch 安装并正常启动：</p><p><img alt="4.elasticsearch_start.png" data-src="/ElkDeploy/elasticsearch_start.png"></p><p>此时通过浏览器访问 127.0.0.1:5601 即可看到 kibana 页面：</p><p><img alt="4.kibana_start.png" data-src="/ElkDeploy/kibana_start.png"></p><p>logstash的验证相比前两种不太一样</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]# whereis logstash  #先查看logstash安装的默认位置</span><br><span class="line">logstash: /etc/logstash /usr/share/logstash</span><br><span class="line"></span><br><span class="line">#执行以下命令。说明：input和output是logstash的两个插件，stdin和stdout分别代表了标准输入和标准输出</span><br><span class="line">[root@study ~]# /usr/share/logstash/bin/logstash -e &apos;input &#123; stdin &#123; &#125; &#125; output &#123; stdout &#123; &#125;&#125;&apos;</span><br></pre></td></tr></table></figure><p>看到 {:port =&gt;9600}，我们在光标等待处随便输入点文字</p><p><img alt="logstash_input.png" data-src="/ElkDeploy/logstash-input.png"></p><p>如果类似消息输出到屏幕则正常：</p><p><img alt data-src="/ElkDeploy/logstash-output.png"></p><p>此时我们还没有用 filebeat 来收集日志，所以也没有生成对应的索引。故此时看到的都是空的。接来下就介绍在需要采集的机器上安装 filebeat 采集日志。</p><h3 id="5-安装-filebeat"><a href="#5-安装-filebeat" class="headerlink" title="5. 安装 filebeat"></a>5. 安装 filebeat</h3><p>在目标采集机器上安装filebeat。因采集机器不同，分为 linux 和 windows 。</p><p>linux：</p><p>安装方式：RPM安装</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]#rpm -ivh filebeat-6.7.1-x86_64.rpm</span><br><span class="line">[root@study ~]#systemctl start filebeat</span><br></pre></td></tr></table></figure><p>对 filebeat.yml 进行简单的配置：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">filebeat.prospectors:  </span><br><span class="line"> - type : log</span><br><span class="line">   enabled: true  			#选择true代表开启</span><br><span class="line">   paths:         			#路径</span><br><span class="line">     - /data/*.log 			#所有.log结尾的日志</span><br><span class="line">   fields:					#自定义字段，便于区分</span><br><span class="line">      host: 127.0.0.1</span><br><span class="line">   tail_files: true			#从尾部开始采集，若选择false则会从头到尾把日志每行都读取</span><br><span class="line">   scan_frequency: 30s		#扫描间隔</span><br><span class="line">   exclude_lines: [&quot;^#&quot;]	#正则表达式：排除空行</span><br><span class="line">   tags: [&quot;nginx&quot;]			#添加tags</span><br><span class="line">output.logstash:			#输出插件到logstash</span><br><span class="line"> hosts: [&quot;127.0.0.1:5044&quot;]	#hosts地址 本机为测试在本机上安装filebeat。按照实际情况填写</span><br></pre></td></tr></table></figure><p>对 filebeat.yml 文件进行测试：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]#cd 到filebeat的安装目录</span><br><span class="line">[root@study ~]#./filebeat test config		#测试配置文件正确性</span><br><span class="line">[root@study ~]#./filebeat test output		#测试配置文件输出的正确性(需要在开启logstash并且指定开放5044端口的前提下，后面会介绍logstash配置开放5044端口)</span><br><span class="line">如果存在异常会返回error。根据error进行调整。若全部正常，则重新启动filebeat</span><br><span class="line">[root@study ~]#systemctl restart filebeat</span><br></pre></td></tr></table></figure><p>windows:</p><p>安装方式：压缩包安装成系统服务</p><p>下载 filebeat-6.7.1-windows-x86_64.zip 解压到指定文件夹，配置文件基本于上述 linux 一样，”paths: “需要更改一下。其他的测试配置文件都相同。下面主要说下把 filebeat 安装成 windows 的服务启动项。</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1.将zip文件内容解压到C：\Program Files(或者其他路径，如果为其他路径要修改install-service-filebeat文件中的路径地址）</span><br><span class="line">2.将filebeat-&lt;version&gt;-windows目录重新命名为filebeat（必须为filebeat）</span><br><span class="line">3.以管理员身份打开PowerShell提示符</span><br><span class="line">4.在PowerShell下将Filebeat安装成Windows服务：</span><br><span class="line">cd ‘c:\Program Files\Filebeat’</span><br><span class="line">.\install-service-filebeat.ps1</span><br><span class="line">5.如果系统禁止脚本执行，则需要为当前会话设置执行策略以允许脚本执行，例如：</span><br><span class="line">PowerShell.exe -ExecutionPolicy UnRestricted -File .\install-service-filebeat.ps1</span><br></pre></td></tr></table></figure><p>这是在 windows 的服务中就可以看到名为 filebeat 的服务启动项了。启动即可。</p><h3 id="6-配置文件证明连通性"><a href="#6-配置文件证明连通性" class="headerlink" title="6.配置文件证明连通性"></a>6.配置文件证明连通性</h3><p>上述 filebeat.yml 已经配置了输出文件到 logstash 的 5044 端口。5044端口是默认端口，此端口可随意更改，只要该端口可以通就可以。如果添加端口后无法进行通讯，修改防火墙策略增加端口放行，或直接关闭防火墙测试。</p><h4 id="6-1配置-logstash-yml-文件："><a href="#6-1配置-logstash-yml-文件：" class="headerlink" title="6.1配置 logstash.yml 文件："></a>6.1配置 logstash.yml 文件：</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]#vim /etc/logstash/config/logstash.yml</span><br><span class="line"><span class="meta">#</span>修改或添加：</span><br><span class="line">http.host: "127.0.0.1"  #主机通讯地址，按实际情况而定</span><br><span class="line">http.port: 9600  #开放端口，默认端口，可更改</span><br><span class="line">path.config: /etc/logstash/conf.d/*.conf #指定配置文件路径</span><br></pre></td></tr></table></figure><p>然后我们在指定路径下配置一个名为 /etc/logstash/conf.d/test.conf 的文件如下：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">input&#123;    				#input插件指定由beats输入，且开放端口号为：5044</span><br><span class="line"> beats&#123;</span><br><span class="line">   port =&gt; 5044</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line">output &#123;</span><br><span class="line">        stdout &#123;</span><br><span class="line">                codec =&gt; rubydebug  #输出到当前屏幕，调试用。后面可以关掉</span><br><span class="line">        &#125;</span><br><span class="line">        elasticsearch&#123;				#输出到 elasticsearch</span><br><span class="line">  			 hosts =&gt; ["127.0.0.1:9200"]	#elasticsearch 的主机地址和端口号</span><br><span class="line">   			 index =&gt; "127.0.0.1-%&#123;+YYYY.MM&#125;"	#自定义索引名称，如不指定，则默认 logstash*</span><br><span class="line">   					 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h4 id="6-2配置elasticsearch-yml"><a href="#6-2配置elasticsearch-yml" class="headerlink" title="6.2配置elasticsearch.yml"></a>6.2配置elasticsearch.yml</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>在elasticsearch.yml添加或修改如下内容</span><br><span class="line">network.host: 127.0.0.1	#主机地址</span><br><span class="line">http.port: 9200			#主机开放端口</span><br></pre></td></tr></table></figure><h4 id="6-3配置kibana-yml"><a href="#6-3配置kibana-yml" class="headerlink" title="6.3配置kibana.yml"></a>6.3配置kibana.yml</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">server.port: 5601		    #kibana开放端口</span><br><span class="line">server.host: "127.0.0.1"	#kibana主机地址</span><br><span class="line">elasticsearch.hosts: ["http://127.0.0.1:9200"]	#kibana连接到的elasticsearch的主机地址及端口号</span><br></pre></td></tr></table></figure><h3 id="7-打开kibana添加索引验证"><a href="#7-打开kibana添加索引验证" class="headerlink" title="7.打开kibana添加索引验证"></a>7.打开kibana添加索引验证</h3><p>如果一切顺利。重启这些服务。等待都完全启动后。在 filebeat 采集的路径日志中随便输入一些文字来验证。</p><p><strong>注：要使用 echo “xxx” &gt;&gt; /data/*.log 的形式，而不是 vim 之后添加。因为filebeat是记录着文件的 PID 号。vim 打开保存后会找不到之前的文件 PID。故会重新采集指定路径的文件，造成每次都是从头开始读行文件。而 echo 不会改变文件的 PID 号。</strong></p><p>如果在<strong>kibana-&gt;管理-&gt;创建索引模式</strong>中可以看到你指定的名为“127.0.0.1-*”的索引。就代表 elk+filebeat 全部运行成功了。</p><p><img alt="7.kibana_index.png" data-src="/ElkDeploy/kibana_index.png"></p><p>(我这里没有截图，偷个懒，就用公司已经在用的索引作为图片说明了)</p></div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者： </strong>未完成</li><li class="post-copyright-link"><strong>本文链接：</strong> <a href="http://newpants.top/2019/08/30/ElkDeploy/" title="ELK+filebeat日志采集（搭建篇）">http://newpants.top/2019/08/30/ElkDeploy/</a></li><li class="post-copyright-license"><strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li></ul></div><footer class="post-footer"><div class="post-tags"><a href="/tags/filebeat/" rel="tag"><i class="fa fa-tag"></i> filebeat</a> <a href="/tags/elasticsearch/" rel="tag"><i class="fa fa-tag"></i> elasticsearch</a> <a href="/tags/logstash/" rel="tag"><i class="fa fa-tag"></i> logstash</a> <a href="/tags/kibana/" rel="tag"><i class="fa fa-tag"></i> kibana</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/2019/08/28/new-pants/" rel="next" title="new pants"><i class="fa fa-chevron-left"></i> new pants</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"><a href="/2019/09/06/filebeat-yml配置详解/" rel="prev" title="filebeat.yml配置详解">filebeat.yml配置详解 <i class="fa fa-chevron-right"></i></a></div></div></footer></div></article></div></div><div class="comments" id="comments"></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span> <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span> <span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc">文章目录</li><li class="sidebar-nav-overview">站点概览</li></ul><div class="post-toc-wrap sidebar-panel"><div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-基本架构图"><span class="nav-number">1.</span> <span class="nav-text">1.基本架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-此例版本号说明"><span class="nav-number">2.</span> <span class="nav-text">2.此例版本号说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-JAVA-环境配置"><span class="nav-number">3.</span> <span class="nav-text">3. JAVA 环境配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-RPM形式安装elk"><span class="nav-number">4.</span> <span class="nav-text">4.RPM形式安装elk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-安装-filebeat"><span class="nav-number">5.</span> <span class="nav-text">5. 安装 filebeat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-配置文件证明连通性"><span class="nav-number">6.</span> <span class="nav-text">6.配置文件证明连通性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1配置-logstash-yml-文件："><span class="nav-number">6.1.</span> <span class="nav-text">6.1配置 logstash.yml 文件：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2配置elasticsearch-yml"><span class="nav-number">6.2.</span> <span class="nav-text">6.2配置elasticsearch.yml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3配置kibana-yml"><span class="nav-number">6.3.</span> <span class="nav-text">6.3配置kibana.yml</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-打开kibana添加索引验证"><span class="nav-number">7.</span> <span class="nav-text">7.打开kibana添加索引验证</span></a></li></ol></div></div><div class="site-overview-wrap sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"><img class="site-author-image" itemprop="image" src="/images/dogman.png" alt="未完成"><p class="site-author-name" itemprop="name">未完成</p><div class="site-description" itemprop="description">数えた日の夢からさよならが</div></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"><a href="/archives/"><span class="site-state-item-count">4</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"><a href="/categories/"><span class="site-state-item-count">3</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/"><span class="site-state-item-count">7</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="feed-link motion-element"><a href="/atom.xml" rel="alternate"><i class="fa fa-rss"></i>RSS</a></div></div><div class="back-to-top motion-element"><i class="fa fa-arrow-up"></i> <span>0%</span></div></div></aside><div id="sidebar-dimmer"></div></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright">&copy; <span itemprop="copyrightYear">2019</span> <span class="with-love" id="animate"><i class="fa fa-gamepad"></i> </span><span class="author" itemprop="copyrightHolder">by 未完成</span> <span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-area-chart"></i> </span><span class="post-meta-item-text">站点总字数：</span> <span title="站点总字数">13k</span></div><div class="busuanzi-count"><script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><span class="post-meta-item-icon"><i class="fa fa-user"></i> </span><span class="site-uv" title="总访客量"><span class="busuanzi-value" id="busuanzi_value_site_uv"></span> </span><span class="post-meta-divider">|</span> <span class="post-meta-item-icon"><i class="fa fa-eye"></i> </span><span class="site-pv" title="总访问量"><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span></div></div></footer></div><script color="65,105,225" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script><script src="/lib/anime.min.js?v=3.1.0"></script><script src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script><script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script><script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script><script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script><script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script><script src="/js/schemes/muse.js?v=7.3.0"></script><script src="/js/next-boot.js?v=7.3.0"></script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script><script src="/js/local-search.js?v=7.3.0"></script><script>NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":true,"dimmer":true},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: true,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="ELK+filebeat日志采集（搭建篇）">
+<meta name="keywords" content="filebeat,elasticsearch,logstash,kibana">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ELK+filebeat日志采集（搭建篇）">
+<meta property="og:url" content="http://newpants.top/2019/08/30/ElkDeploy/index.html">
+<meta property="og:site_name" content="NewPants">
+<meta property="og:description" content="ELK+filebeat日志采集（搭建篇）">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-09-12T02:39:54.788Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ELK+filebeat日志采集（搭建篇）">
+<meta name="twitter:description" content="ELK+filebeat日志采集（搭建篇）">
+  <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
+  <link rel="canonical" href="http://newpants.top/2019/08/30/ElkDeploy/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>ELK+filebeat日志采集（搭建篇） | NewPants</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NewPants</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/padimxxx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://newpants.top/2019/08/30/ElkDeploy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="未完成">
+      <meta itemprop="description" content="数えた日の夢からさよならが">
+      <meta itemprop="image" content="/images/dogman.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NewPants">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">ELK+filebeat日志采集（搭建篇）
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-30 11:14:03" itemprop="dateCreated datePublished" datetime="2019-08-30T11:14:03+08:00">2019-08-30</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-12 10:39:54" itemprop="dateModified" datetime="2019-09-12T10:39:54+08:00">2019-09-12</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/ELK/" itemprop="url" rel="index"><span itemprop="name">ELK</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span id="/2019/08/30/ElkDeploy/" class="post-meta-item leancloud_visitors" data-flag-title="ELK+filebeat日志采集（搭建篇）" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/08/30/ElkDeploy/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2019/08/30/ElkDeploy/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>5.8k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>ELK+filebeat日志采集（搭建篇）</p>
+<a id="more"></a>
+
+<p><img alt data-src="/ElkDeploy/elastic_top.png"></p>
+<p>这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。</p>
+<p><strong>每种程序的单独介绍可在以下查看（常用的一些配置和概念）：</strong></p>
+<p><strong><a href>elasticsearch介绍及配置说明(待更新)</a></strong></p>
+<p><strong><a href>logstash介绍配置说明(待更新)</a></strong></p>
+<p><strong><a href>kibana介绍及配置说明(待更新)</a></strong></p>
+<p><strong><a href="https://newpants.top/2019/09/06/filebeat-yml配置详解">filebeat介绍及配置说明(待更新)</a></strong></p>
+<p><a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">elastic官方文档地址</a>   #官方文档说明的都很详细</p>
+<h3 id="1-基本架构图"><a href="#1-基本架构图" class="headerlink" title="1.基本架构图"></a>1.基本架构图</h3><p><img alt data-src="/ElkDeploy/Architecture_diagram.png"></p>
+<p>elasticsearch： 一款基于 Lucene 的搜索服务器。可以理解为数据库，我们日后将要采集的日志都将储存在这里。</p>
+<p>logstash： logstash 的主要功能是将数据按照我们的要求进行过滤和筛选。完成我们制定的工作发送给 elasticsearch 后以便我们查询。</p>
+<p>kibana： 基于web的查看页面。已经开始提供越来越多的 api。以前的 elasticsearch 还需要 elasticsearch-head 或者直接服务器上面进行操作和查询。现 kibana 的控制台基本可以满足大部分需求。</p>
+<p>filebeat： 采集工具。因为 logstash 非常的消耗系统资源，为了不影响业务服务器，使用 filebeat ，他非常轻量。基本不占用什么空间和系统资源。</p>
+<p>大致流程：filebeat（采集）–&gt; logstash（过滤）–&gt; elasticsearch（储存）–&gt; kibana(查看)</p>
+<h3 id="2-此例版本号说明"><a href="#2-此例版本号说明" class="headerlink" title="2.此例版本号说明"></a>2.此例版本号说明</h3><table>
+<thead>
+<tr>
+<th>软件</th>
+<th>Java</th>
+<th>Elasticsearch</th>
+<th>Logstash</th>
+<th>Kibana</th>
+<th>Filebeat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>版本号</td>
+<td>1.8.0_181</td>
+<td>6.7.1</td>
+<td>6.7.1</td>
+<td>6.7.1</td>
+<td>6.7.1</td>
+</tr>
+</tbody></table>
+<p>因为采集量不大，且公司内部部分需求。所以此篇文章是在一台centos7服务器上搭建elasticsearch+logstash+kibana 。其他需要采集的机器上安装 filebeat 进行采集。</p>
+<p>这里需要注意的是，elasticsearch 和 logstash 需要在 java 环境下运行。</p>
+<p><strong>以下安装过程简单带过，网上已经有了很多，遇到问题可以简单进行百度分析。（官方建议最好保持elk+filebeat版本一致性，以避免不可预估的情况发生）</strong></p>
+<h3 id="3-JAVA-环境配置"><a href="#3-JAVA-环境配置" class="headerlink" title="3. JAVA 环境配置"></a>3. JAVA 环境配置</h3><p>此例使用压缩包形式安装，在<a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html" target="_blank" rel="noopener">orcale官网jdk下载</a>，按照需求选择需要下载的jdk版本，此例使用 jdk-8u201-linux-x64.tar.gz</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">tar -xvzf jdk-8u201-linux-x64.tar.gz     #解压</span><br><span class="line">mv jdk1.8.0_201/ /usr/jdk1.8.0_201       #移动解压包至/usr下</span><br><span class="line"></span><br><span class="line">vim /etc/profile					     #编辑系统配置文件，添加 如下java 环境变量</span><br><span class="line">export JAVA_HOME=/usr/jdk1.8.0_201  #如果不生效，在jdk1.8.0_201加“/”，目录按照实际情况</span><br><span class="line">export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar</span><br><span class="line">export PATH=$PATH:$JAVA_HOME/bin</span><br><span class="line"></span><br><span class="line">source /etc/profile                       #重新加载环境变量</span><br><span class="line">java -version                              #验证</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-RPM形式安装elk"><a href="#4-RPM形式安装elk" class="headerlink" title="4.RPM形式安装elk"></a>4.RPM形式安装elk</h3><p>在elastic官网：<a href="https://www.elastic.co/cn/" target="_blank" rel="noopener">elastic官网</a>，找到产品相应的下载页面。下载rpm包（当然也可以使用yum或者压缩包形式安装，个人认为rpm比较方便，关键在于可以统一版本）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">rpm -ivh elasticsearch-6.7.1-x86_64.rpm</span><br><span class="line">rpm -ivh logstash-6.7.1.rpm</span><br><span class="line">rpm -ivh kibana-6.7.1-x86_64.rpm</span><br></pre></td></tr></table></figure>
+
+<p>因资源有限且需求量不大，故本例三种程序都安装在一台 linux centos7 上。安装完成后，查看程序是否正常启动即可。启动顺序最好按照： </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl start elasticsearch</span><br><span class="line">systemctl start logstash</span><br><span class="line">systemctl start kibana</span><br></pre></td></tr></table></figure>
+
+<p>查看是否安装并启动成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">netstat -tunlp | grep 9200     #elasticsearch默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp6     0      0  127.0.0.1:9200          :::*                LISTEN      12427/java</span><br><span class="line"></span><br><span class="line">netstat -tunlp | grep 9600		#logstash默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp6     0      0  127.0.0.1:9600          :::*                LISTEN      17905/java</span><br><span class="line"></span><br><span class="line">netstat -tunlp | grep 5601		#kibana默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp     0      0   127.0.0.1:5601          :::*                LISTEN      4666/node</span><br></pre></td></tr></table></figure>
+
+<p>此时通过浏览器访问 127.0.0.1:9200 返回类似如下页面，证明 elasticsearch 安装并正常启动：</p>
+<p><img alt="4.elasticsearch_start.png" data-src="/ElkDeploy/elasticsearch_start.png"></p>
+<p>此时通过浏览器访问 127.0.0.1:5601 即可看到 kibana 页面：</p>
+<p><img alt="4.kibana_start.png" data-src="/ElkDeploy/kibana_start.png"></p>
+<p>logstash的验证相比前两种不太一样</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]# whereis logstash  #先查看logstash安装的默认位置</span><br><span class="line">logstash: /etc/logstash /usr/share/logstash</span><br><span class="line"></span><br><span class="line">#执行以下命令。说明：input和output是logstash的两个插件，stdin和stdout分别代表了标准输入和标准输出</span><br><span class="line">[root@study ~]# /usr/share/logstash/bin/logstash -e &apos;input &#123; stdin &#123; &#125; &#125; output &#123; stdout &#123; &#125;&#125;&apos;</span><br></pre></td></tr></table></figure>
+
+<p>看到 {:port =&gt;9600}，我们在光标等待处随便输入点文字</p>
+<p><img alt="logstash_input.png" data-src="/ElkDeploy/logstash-input.png"></p>
+<p>如果类似消息输出到屏幕则正常：</p>
+<p><img alt data-src="/ElkDeploy/logstash-output.png"></p>
+<p>此时我们还没有用 filebeat 来收集日志，所以也没有生成对应的索引。故此时看到的都是空的。接来下就介绍在需要采集的机器上安装 filebeat 采集日志。</p>
+<h3 id="5-安装-filebeat"><a href="#5-安装-filebeat" class="headerlink" title="5. 安装 filebeat"></a>5. 安装 filebeat</h3><p>在目标采集机器上安装filebeat。因采集机器不同，分为 linux 和 windows 。</p>
+<p>linux：</p>
+<p>安装方式：RPM安装</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]#rpm -ivh filebeat-6.7.1-x86_64.rpm</span><br><span class="line">[root@study ~]#systemctl start filebeat</span><br></pre></td></tr></table></figure>
+
+<p>对 filebeat.yml 进行简单的配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">filebeat.prospectors:  </span><br><span class="line"> - type : log</span><br><span class="line">   enabled: true  			#选择true代表开启</span><br><span class="line">   paths:         			#路径</span><br><span class="line">     - /data/*.log 			#所有.log结尾的日志</span><br><span class="line">   fields:					#自定义字段，便于区分</span><br><span class="line">      host: 127.0.0.1</span><br><span class="line">   tail_files: true			#从尾部开始采集，若选择false则会从头到尾把日志每行都读取</span><br><span class="line">   scan_frequency: 30s		#扫描间隔</span><br><span class="line">   exclude_lines: [&quot;^#&quot;]	#正则表达式：排除空行</span><br><span class="line">   tags: [&quot;nginx&quot;]			#添加tags</span><br><span class="line">output.logstash:			#输出插件到logstash</span><br><span class="line"> hosts: [&quot;127.0.0.1:5044&quot;]	#hosts地址 本机为测试在本机上安装filebeat。按照实际情况填写</span><br></pre></td></tr></table></figure>
+
+<p>对 filebeat.yml 文件进行测试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]#cd 到filebeat的安装目录</span><br><span class="line">[root@study ~]#./filebeat test config		#测试配置文件正确性</span><br><span class="line">[root@study ~]#./filebeat test output		#测试配置文件输出的正确性(需要在开启logstash并且指定开放5044端口的前提下，后面会介绍logstash配置开放5044端口)</span><br><span class="line">如果存在异常会返回error。根据error进行调整。若全部正常，则重新启动filebeat</span><br><span class="line">[root@study ~]#systemctl restart filebeat</span><br></pre></td></tr></table></figure>
+
+<p>windows:</p>
+<p>安装方式：压缩包安装成系统服务</p>
+<p>下载 filebeat-6.7.1-windows-x86_64.zip 解压到指定文件夹，配置文件基本于上述 linux 一样，”paths: “需要更改一下。其他的测试配置文件都相同。下面主要说下把 filebeat 安装成 windows 的服务启动项。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1.将zip文件内容解压到C：\Program Files(或者其他路径，如果为其他路径要修改install-service-filebeat文件中的路径地址）</span><br><span class="line">2.将filebeat-&lt;version&gt;-windows目录重新命名为filebeat（必须为filebeat）</span><br><span class="line">3.以管理员身份打开PowerShell提示符</span><br><span class="line">4.在PowerShell下将Filebeat安装成Windows服务：</span><br><span class="line">cd ‘c:\Program Files\Filebeat’</span><br><span class="line">.\install-service-filebeat.ps1</span><br><span class="line">5.如果系统禁止脚本执行，则需要为当前会话设置执行策略以允许脚本执行，例如：</span><br><span class="line">PowerShell.exe -ExecutionPolicy UnRestricted -File .\install-service-filebeat.ps1</span><br></pre></td></tr></table></figure>
+
+<p>这是在 windows 的服务中就可以看到名为 filebeat 的服务启动项了。启动即可。</p>
+<h3 id="6-配置文件证明连通性"><a href="#6-配置文件证明连通性" class="headerlink" title="6.配置文件证明连通性"></a>6.配置文件证明连通性</h3><p>上述 filebeat.yml 已经配置了输出文件到 logstash 的 5044 端口。5044端口是默认端口，此端口可随意更改，只要该端口可以通就可以。如果添加端口后无法进行通讯，修改防火墙策略增加端口放行，或直接关闭防火墙测试。</p>
+<h4 id="6-1配置-logstash-yml-文件："><a href="#6-1配置-logstash-yml-文件：" class="headerlink" title="6.1配置 logstash.yml 文件："></a>6.1配置 logstash.yml 文件：</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]#vim /etc/logstash/config/logstash.yml</span><br><span class="line"><span class="meta">#</span>修改或添加：</span><br><span class="line">http.host: "127.0.0.1"  #主机通讯地址，按实际情况而定</span><br><span class="line">http.port: 9600  #开放端口，默认端口，可更改</span><br><span class="line">path.config: /etc/logstash/conf.d/*.conf #指定配置文件路径</span><br></pre></td></tr></table></figure>
+
+<p>然后我们在指定路径下配置一个名为 /etc/logstash/conf.d/test.conf 的文件如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">input&#123;    				#input插件指定由beats输入，且开放端口号为：5044</span><br><span class="line"> beats&#123;</span><br><span class="line">   port =&gt; 5044</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line">output &#123;</span><br><span class="line">        stdout &#123;</span><br><span class="line">                codec =&gt; rubydebug  #输出到当前屏幕，调试用。后面可以关掉</span><br><span class="line">        &#125;</span><br><span class="line">        elasticsearch&#123;				#输出到 elasticsearch</span><br><span class="line">  			 hosts =&gt; ["127.0.0.1:9200"]	#elasticsearch 的主机地址和端口号</span><br><span class="line">   			 index =&gt; "127.0.0.1-%&#123;+YYYY.MM&#125;"	#自定义索引名称，如不指定，则默认 logstash*</span><br><span class="line">   					 &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-2配置elasticsearch-yml"><a href="#6-2配置elasticsearch-yml" class="headerlink" title="6.2配置elasticsearch.yml"></a>6.2配置elasticsearch.yml</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>在elasticsearch.yml添加或修改如下内容</span><br><span class="line">network.host: 127.0.0.1	#主机地址</span><br><span class="line">http.port: 9200			#主机开放端口</span><br></pre></td></tr></table></figure>
+
+<h4 id="6-3配置kibana-yml"><a href="#6-3配置kibana-yml" class="headerlink" title="6.3配置kibana.yml"></a>6.3配置kibana.yml</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">server.port: 5601		    #kibana开放端口</span><br><span class="line">server.host: "127.0.0.1"	#kibana主机地址</span><br><span class="line">elasticsearch.hosts: ["http://127.0.0.1:9200"]	#kibana连接到的elasticsearch的主机地址及端口号</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-打开kibana添加索引验证"><a href="#7-打开kibana添加索引验证" class="headerlink" title="7.打开kibana添加索引验证"></a>7.打开kibana添加索引验证</h3><p>如果一切顺利。重启这些服务。等待都完全启动后。在 filebeat 采集的路径日志中随便输入一些文字来验证。</p>
+<p><strong>注：要使用 echo “xxx” &gt;&gt;  /data/*.log 的形式，而不是 vim 之后添加。因为filebeat是记录着文件的 PID 号。vim 打开保存后会找不到之前的文件 PID。故会重新采集指定路径的文件，造成每次都是从头开始读行文件。而 echo 不会改变文件的 PID 号。</strong></p>
+<p> 如果在<strong>kibana-&gt;管理-&gt;创建索引模式</strong>中可以看到你指定的名为“127.0.0.1-*”的索引。就代表 elk+filebeat 全部运行成功了。</p>
+<p><img alt="7.kibana_index.png" data-src="/ElkDeploy/kibana_index.png"></p>
+<p>(我这里没有截图，偷个懒，就用公司已经在用的索引作为图片说明了)</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>未完成</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://newpants.top/2019/08/30/ElkDeploy/" title="ELK+filebeat日志采集（搭建篇）">http://newpants.top/2019/08/30/ElkDeploy/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/filebeat/" rel="tag"><i class="fa fa-tag"></i> filebeat</a>
+            
+              <a href="/tags/elasticsearch/" rel="tag"><i class="fa fa-tag"></i> elasticsearch</a>
+            
+              <a href="/tags/logstash/" rel="tag"><i class="fa fa-tag"></i> logstash</a>
+            
+              <a href="/tags/kibana/" rel="tag"><i class="fa fa-tag"></i> kibana</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/08/28/new-pants/" rel="next" title="new pants">
+                  <i class="fa fa-chevron-left"></i> new pants
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/09/06/filebeat-yml配置详解/" rel="prev" title="filebeat.yml配置详解">
+                  filebeat.yml配置详解 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-基本架构图"><span class="nav-number">1.</span> <span class="nav-text">1.基本架构图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-此例版本号说明"><span class="nav-number">2.</span> <span class="nav-text">2.此例版本号说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-JAVA-环境配置"><span class="nav-number">3.</span> <span class="nav-text">3. JAVA 环境配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-RPM形式安装elk"><span class="nav-number">4.</span> <span class="nav-text">4.RPM形式安装elk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-安装-filebeat"><span class="nav-number">5.</span> <span class="nav-text">5. 安装 filebeat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-配置文件证明连通性"><span class="nav-number">6.</span> <span class="nav-text">6.配置文件证明连通性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#6-1配置-logstash-yml-文件："><span class="nav-number">6.1.</span> <span class="nav-text">6.1配置 logstash.yml 文件：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-2配置elasticsearch-yml"><span class="nav-number">6.2.</span> <span class="nav-text">6.2配置elasticsearch.yml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-3配置kibana-yml"><span class="nav-number">6.3.</span> <span class="nav-text">6.3配置kibana.yml</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-打开kibana添加索引验证"><span class="nav-number">7.</span> <span class="nav-text">7.打开kibana添加索引验证</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/dogman.png"
+      alt="未完成">
+  <p class="site-author-name" itemprop="name">未完成</p>
+  <div class="site-description" itemprop="description">数えた日の夢からさよならが</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+		
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-gamepad"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">by 未完成</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">13k</span>
+</div>
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+	
+  
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+    
+  
+  <script color='65,105,225' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
   var GUEST = ['nick', 'mail', 'link'];
   var guest = 'nick,mail,link';
   guest = guest.split(',').filter(item => {
@@ -18,4 +805,8 @@
     lang: 'zh-cn' || 'zh-cn',
     path: location.pathname
   });
-}, window.Valine);</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({pluginRootPath:"live2dw/",pluginJsPath:"lib/",pluginModelPath:"assets/",tagMode:!1,log:!1,model:{jsonPath:"/live2dw/assets/tororo.model.json"},display:{position:"left",width:150,height:300},mobile:{show:!0},react:{opacity:.7}})</script></body></html><!-- rebuild by neat -->
+}, window.Valine);
+</script>
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/tororo.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

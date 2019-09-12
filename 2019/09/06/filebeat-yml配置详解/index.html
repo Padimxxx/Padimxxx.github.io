@@ -39,7 +39,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: true,
     mediumzoom: false,
-    lazyload: true,
+    lazyload: false,
     pangu: true,
     algolia: {
       appID: '',
@@ -68,10 +68,13 @@
 <meta property="og:site_name" content="NewPants">
 <meta property="og:description" content="filebeat.yml配置详解">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/beats.png">
+<meta property="og:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/wwwcache_kibana.png">
 <meta property="og:updated_time" content="2019-09-12T02:40:15.768Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="filebeat.yml配置详解">
 <meta name="twitter:description" content="filebeat.yml配置详解">
+<meta name="twitter:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/beats.png">
   <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
   <link rel="canonical" href="http://newpants.top/2019/09/06/filebeat-yml配置详解/">
 
@@ -366,7 +369,7 @@
 <a id="more"></a>
 
 <h4 id="1-filebeat介绍"><a href="#1-filebeat介绍" class="headerlink" title="1.filebeat介绍"></a>1.filebeat介绍</h4><p>filebeat 是 elastic beats 中的一个轻量型的采集器。beats 包含很多系列，如官网下图：</p>
-<p><img alt="beat系列" data-src="/filebeat-yml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/beats.png"></p>
+<p><img src="/2019/09/06/filebeat-yml配置详解/beats.png" alt="beat系列"></p>
 <p>基本从名字就可以看得出来其对应的功能。这里我们使用 filebeat 主要针对文件（也就是需要采集的log日志) 来进行采集。</p>
 <p>filebeat 的原理是开启一个 prospectors(收割者)，对文件逐行进行采集。</p>
 <h4 id="2-示例文件及配置解析"><a href="#2-示例文件及配置解析" class="headerlink" title="2.示例文件及配置解析"></a>2.示例文件及配置解析</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">filebeat.prospectors:</span>			<span class="comment">#采集 abc.com 下 nginx 的 access 日志 </span></span><br><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwlog/nginx/abc.com.access.log</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["nginx_access"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
@@ -389,7 +392,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span>2 /data/server/wwwroot/tui.tongbu.com/index.php(28): CApplication-&gt;run()</span><br><span class="line"><span class="meta">#</span>3 &#123;main&#125;</span><br><span class="line">REQUEST_URI=/apple-touch-icon-120x120-precomposed.png</span><br><span class="line">---</span><br><span class="line">2019/09/06 16:47:32 [error] [exception.CHttpException.404] CHttpException: Unable to resolve the request "apple-touch-icon-120x120.png". in /data/server/wwwroot/yii/framework/web/CWebApplication.php:286</span><br><span class="line">Stack trace:</span><br><span class="line"><span class="meta">#</span>0 /data/server/wwwroot/yii/framework/web/CWebApplication.php(141): CWebApplication-&gt;runController('apple-touch-ico...')</span><br><span class="line"><span class="meta">#</span>1 /data/server/wwwroot/yii/framework/base/CApplication.php(185): CWebApplication-&gt;processRequest()</span><br><span class="line"><span class="meta">#</span>2 /data/server/wwwroot/tui.tongbu.com/index.php(28): CApplication-&gt;run()</span><br><span class="line"><span class="meta">#</span>3 &#123;main&#125;</span><br><span class="line">REQUEST_URI=/apple-touch-icon-120x120.png</span><br><span class="line">---</span><br></pre></td></tr></table></figure>
 
 <p>增加正规表达式后：</p>
-<p><img alt="合并多行日志" data-src="/filebeat-yml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/wwwcache_kibana.png"></p>
+<p><img src="/2019/09/06/filebeat-yml配置详解/wwwcache_kibana.png" alt="合并多行日志"></p>
 
     </div>
 
@@ -661,7 +664,6 @@
   <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
 <script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
 <script src="/js/schemes/muse.js?v=7.3.0"></script>

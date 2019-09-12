@@ -39,7 +39,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: true,
     mediumzoom: false,
-    lazyload: true,
+    lazyload: false,
     pangu: true,
     algolia: {
       appID: '',
@@ -68,10 +68,25 @@
 <meta property="og:site_name" content="NewPants">
 <meta property="og:description" content="使用 zabbix 对 docker 运行容器使用的 CPU 和内存情况等进行监控">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/zabbix_share1.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/zabbix_share2.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/docker_discovery.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/docker_monitor1.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/docker_monitor2.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web1.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web2.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web3.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web4.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web5.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web6.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web7.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web8.png">
+<meta property="og:image" content="http://newpants.top/2019/09/10/zabbix监控docker/web10.png">
 <meta property="og:updated_time" content="2019-09-12T02:39:44.337Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="zabbix监控docker">
 <meta name="twitter:description" content="使用 zabbix 对 docker 运行容器使用的 CPU 和内存情况等进行监控">
+<meta name="twitter:image" content="http://newpants.top/2019/09/10/zabbix监控docker/zabbix_share1.png">
   <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
   <link rel="canonical" href="http://newpants.top/2019/09/10/zabbix监控docker/">
 
@@ -366,9 +381,9 @@
 <a id="more"></a>
 
 <p>官网有提供了一些监控 docker 信息的模板。具体可以通过点击 zabbix 主页的 share 进入官网网址后搜索下载，并按步骤进行安装即可（如下图）</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/zabbix_share1.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/zabbix_share1.png" alt></p>
 <p>搜索框里直接搜索docker即可。还有各种各样的其他模板共使用。</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/zabbix_share2.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/zabbix_share2.png" alt></p>
 <h4 id="1-zabbix监控原理"><a href="#1-zabbix监控原理" class="headerlink" title="1.zabbix监控原理"></a>1.zabbix监控原理</h4><p>本文使用自建的 python 脚本对 docker 进行监控。zabbix 监控大致原理可以分为：</p>
 <p>增加键值 –&gt; 采集数据 –&gt;  agent 端传递键值给server端 –&gt; web 界面增加模板 –&gt; 为主机添加模板 –&gt; 添加触发器/图形等</p>
 <h4 id="2-增加键值"><a href="#2-增加键值" class="headerlink" title="2.增加键值"></a>2.增加键值</h4><p>那第一步我们就是要来采集数据了。</p>
@@ -405,13 +420,13 @@
 <p>脚本的编写这里就不详细说了，如果有 python 基础，大部分的代码还是看得懂的。</p>
 <p>建议直接复制上面两个脚本，并且记得下载脚本中所需的 python 包：<strong>docker、simplejson、subprocess</strong>等。并且增加脚本的可执行权限。否则会报错。</p>
 <p>可以直接在终端执行”python /etc/zabbix/script/docker_discovery.py”检验代码是否有误，如下图：</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/docker_discovery.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/docker_discovery.png" alt></p>
 <p>可以看到我这里已经获取了三个容器，并且分别打印了他们的名称（就如同我们使用 docker ps 看到的一样）</p>
 <p>docker_monitor.py 直接运行可不行，会报错：</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/docker_monitor1.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/docker_monitor1.png" alt></p>
 <p>提示我们超出列表值，这是因为我们没有在后面接指定的”<strong>container_name</strong>“和”<strong>collect_item</strong>“。这也是”docker_status.conf”文件中为什么要在最后增加”$1 $2”的原因。</p>
 <p>增加指定的两个变量后：</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/docker_monitor2.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/docker_monitor2.png" alt></p>
 <p><strong>tb-nginx:</strong> 运行 docker_discovery.py获取到的容器名字</p>
 <p><strong>cpu_percent:</strong>  docker_monitor.py中编写的”collect_item”值</p>
 <p>可以看到返回1.45。即我们容器名为”tb-nginx“的 CPU 使用占比为：1.45%</p>
@@ -422,23 +437,23 @@
 <p>192.168.40.10 ：就是你刚才增加键值的 agent 端，根据实际情况更改。</p>
 <p>如果有正常返回值，那么就可以了，接下来配置 web 端。</p>
 <h4 id="5-web界面增加监控模板"><a href="#5-web界面增加监控模板" class="headerlink" title="5.web界面增加监控模板"></a>5.web界面增加监控模板</h4><p>打开 zabbix 的 web 界面，配置 –&gt; 模板 –&gt; 创建模板 </p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web1.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/web1.png" alt></p>
 <p>我这里已经添加好了，可以看到”已连接到”那里已经链接了几个模板。</p>
 <p>名称、应用集、模板群组等这些都可根据个人喜好设定，方便管理和识别即可。</p>
 <p>比较关键的是接下来”自动发现规则”这里。</p>
-<h5 id="5-1创建发现规则"><a href="#5-1创建发现规则" class="headerlink" title="5.1创建发现规则"></a>5.1创建发现规则</h5><p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web2.png"></p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web3.png"></p>
-<h5 id="5-2添加监控项原形"><a href="#5-2添加监控项原形" class="headerlink" title="5.2添加监控项原形"></a>5.2添加监控项原形</h5><p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web4.png"></p>
+<h5 id="5-1创建发现规则"><a href="#5-1创建发现规则" class="headerlink" title="5.1创建发现规则"></a>5.1创建发现规则</h5><p><img src="/2019/09/10/zabbix监控docker/web2.png" alt></p>
+<p><img src="/2019/09/10/zabbix监控docker/web3.png" alt></p>
+<h5 id="5-2添加监控项原形"><a href="#5-2添加监控项原形" class="headerlink" title="5.2添加监控项原形"></a>5.2添加监控项原形</h5><p><img src="/2019/09/10/zabbix监控docker/web4.png" alt></p>
 <p>两个监控项原形创建：</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web5.png"></p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web6.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/web5.png" alt></p>
+<p><img src="/2019/09/10/zabbix监控docker/web6.png" alt></p>
 <h4 id="6-为主机链接模板"><a href="#6-为主机链接模板" class="headerlink" title="6.为主机链接模板"></a>6.为主机链接模板</h4><p>找到需要监控的主机，添加模板：</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web7.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/web7.png" alt></p>
 <p>添加后点击更新。然后稍微等几分钟。点进监控项里查看，就可以看到我们自动发现的容器了。</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web8.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/web8.png" alt></p>
 <p>有了监控项且没有报错，可以在 zabbix web 界面 –&gt;监测中 –&gt; 最新数据 中查看对应的值了。</p>
 <p>然后接下来可以增加触发器、图形这些的。我这里图形是手动添加的，当然也可以自动添加，自动添加就是在增加 “docker自动发现模板”那里，再增加一个图形的模板。我这里需求的不太多，就手动添加了，效果图如下：</p>
-<p><img alt data-src="/zabbix%E7%9B%91%E6%8E%A7docker/web10.png"></p>
+<p><img src="/2019/09/10/zabbix监控docker/web10.png" alt></p>
 
     </div>
 
@@ -708,7 +723,6 @@
   <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
 <script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
 <script src="/js/schemes/muse.js?v=7.3.0"></script>

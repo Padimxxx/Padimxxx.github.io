@@ -39,7 +39,7 @@
     bookmark: {"enable":false,"color":"#222","save":"auto"},
     fancybox: true,
     mediumzoom: false,
-    lazyload: true,
+    lazyload: false,
     pangu: true,
     algolia: {
       appID: '',
@@ -68,10 +68,18 @@
 <meta property="og:site_name" content="NewPants">
 <meta property="og:description" content="ELK+filebeat日志采集（搭建篇）">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/elastic_top.png">
+<meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/Architecture_diagram.png">
+<meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/elasticsearch_start.png">
+<meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/kibana_start.png">
+<meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/logstash-input.png">
+<meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/logstash-output.png">
+<meta property="og:image" content="http://newpants.top/2019/08/30/ElkDeploy/kibana_index.png">
 <meta property="og:updated_time" content="2019-09-12T02:39:54.788Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ELK+filebeat日志采集（搭建篇）">
 <meta name="twitter:description" content="ELK+filebeat日志采集（搭建篇）">
+<meta name="twitter:image" content="http://newpants.top/2019/08/30/ElkDeploy/elastic_top.png">
   <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
   <link rel="canonical" href="http://newpants.top/2019/08/30/ElkDeploy/">
 
@@ -365,7 +373,7 @@
         <p>ELK+filebeat日志采集（搭建篇）</p>
 <a id="more"></a>
 
-<p><img alt data-src="/ElkDeploy/elastic_top.png"></p>
+<p><img src="/2019/08/30/ElkDeploy/elastic_top.png" alt></p>
 <p>这里不进行配置文件配置更改的说明。全部使用默认配置文件，此篇主要旨在介绍正常安装及运行。</p>
 <p><strong>每种程序的单独介绍可在以下查看（常用的一些配置和概念）：</strong></p>
 <p><strong><a href>elasticsearch介绍及配置说明(待更新)</a></strong></p>
@@ -373,7 +381,7 @@
 <p><strong><a href>kibana介绍及配置说明(待更新)</a></strong></p>
 <p><strong><a href="https://newpants.top/2019/09/06/filebeat-yml配置详解">filebeat介绍及配置说明(待更新)</a></strong></p>
 <p><a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">elastic官方文档地址</a>   #官方文档说明的都很详细</p>
-<h3 id="1-基本架构图"><a href="#1-基本架构图" class="headerlink" title="1.基本架构图"></a>1.基本架构图</h3><p><img alt data-src="/ElkDeploy/Architecture_diagram.png"></p>
+<h3 id="1-基本架构图"><a href="#1-基本架构图" class="headerlink" title="1.基本架构图"></a>1.基本架构图</h3><p><img src="/2019/08/30/ElkDeploy/Architecture_diagram.png" alt></p>
 <p>elasticsearch： 一款基于 Lucene 的搜索服务器。可以理解为数据库，我们日后将要采集的日志都将储存在这里。</p>
 <p>logstash： logstash 的主要功能是将数据按照我们的要求进行过滤和筛选。完成我们制定的工作发送给 elasticsearch 后以便我们查询。</p>
 <p>kibana： 基于web的查看页面。已经开始提供越来越多的 api。以前的 elasticsearch 还需要 elasticsearch-head 或者直接服务器上面进行操作和查询。现 kibana 的控制台基本可以满足大部分需求。</p>
@@ -415,16 +423,16 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">netstat -tunlp | grep 9200     #elasticsearch默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp6     0      0  127.0.0.1:9200          :::*                LISTEN      12427/java</span><br><span class="line"></span><br><span class="line">netstat -tunlp | grep 9600		#logstash默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp6     0      0  127.0.0.1:9600          :::*                LISTEN      17905/java</span><br><span class="line"></span><br><span class="line">netstat -tunlp | grep 5601		#kibana默认开放端口，有返回如下结果代表端口已启动</span><br><span class="line">tcp     0      0   127.0.0.1:5601          :::*                LISTEN      4666/node</span><br></pre></td></tr></table></figure>
 
 <p>此时通过浏览器访问 127.0.0.1:9200 返回类似如下页面，证明 elasticsearch 安装并正常启动：</p>
-<p><img alt="4.elasticsearch_start.png" data-src="/ElkDeploy/elasticsearch_start.png"></p>
+<p><img src="/2019/08/30/ElkDeploy/elasticsearch_start.png" alt="4.elasticsearch_start.png"></p>
 <p>此时通过浏览器访问 127.0.0.1:5601 即可看到 kibana 页面：</p>
-<p><img alt="4.kibana_start.png" data-src="/ElkDeploy/kibana_start.png"></p>
+<p><img src="/2019/08/30/ElkDeploy/kibana_start.png" alt="4.kibana_start.png"></p>
 <p>logstash的验证相比前两种不太一样</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@study ~]# whereis logstash  #先查看logstash安装的默认位置</span><br><span class="line">logstash: /etc/logstash /usr/share/logstash</span><br><span class="line"></span><br><span class="line">#执行以下命令。说明：input和output是logstash的两个插件，stdin和stdout分别代表了标准输入和标准输出</span><br><span class="line">[root@study ~]# /usr/share/logstash/bin/logstash -e &apos;input &#123; stdin &#123; &#125; &#125; output &#123; stdout &#123; &#125;&#125;&apos;</span><br></pre></td></tr></table></figure>
 
 <p>看到 {:port =&gt;9600}，我们在光标等待处随便输入点文字</p>
-<p><img alt="logstash_input.png" data-src="/ElkDeploy/logstash-input.png"></p>
+<p><img src="/2019/08/30/ElkDeploy/logstash-input.png" alt="logstash_input.png"></p>
 <p>如果类似消息输出到屏幕则正常：</p>
-<p><img alt data-src="/ElkDeploy/logstash-output.png"></p>
+<p><img src="/2019/08/30/ElkDeploy/logstash-output.png" alt></p>
 <p>此时我们还没有用 filebeat 来收集日志，所以也没有生成对应的索引。故此时看到的都是空的。接来下就介绍在需要采集的机器上安装 filebeat 采集日志。</p>
 <h3 id="5-安装-filebeat"><a href="#5-安装-filebeat" class="headerlink" title="5. 安装 filebeat"></a>5. 安装 filebeat</h3><p>在目标采集机器上安装filebeat。因采集机器不同，分为 linux 和 windows 。</p>
 <p>linux：</p>
@@ -456,7 +464,7 @@
 <h3 id="7-打开kibana添加索引验证"><a href="#7-打开kibana添加索引验证" class="headerlink" title="7.打开kibana添加索引验证"></a>7.打开kibana添加索引验证</h3><p>如果一切顺利。重启这些服务。等待都完全启动后。在 filebeat 采集的路径日志中随便输入一些文字来验证。</p>
 <p><strong>注：要使用 echo “xxx” &gt;&gt;  /data/*.log 的形式，而不是 vim 之后添加。因为filebeat是记录着文件的 PID 号。vim 打开保存后会找不到之前的文件 PID。故会重新采集指定路径的文件，造成每次都是从头开始读行文件。而 echo 不会改变文件的 PID 号。</strong></p>
 <p> 如果在<strong>kibana-&gt;管理-&gt;创建索引模式</strong>中可以看到你指定的名为“127.0.0.1-*”的索引。就代表 elk+filebeat 全部运行成功了。</p>
-<p><img alt="7.kibana_index.png" data-src="/ElkDeploy/kibana_index.png"></p>
+<p><img src="/2019/08/30/ElkDeploy/kibana_index.png" alt="7.kibana_index.png"></p>
 <p>(我这里没有截图，偷个懒，就用公司已经在用的索引作为图片说明了)</p>
 
     </div>
@@ -735,7 +743,6 @@
   <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
   <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
 <script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
 <script src="/js/schemes/muse.js?v=7.3.0"></script>

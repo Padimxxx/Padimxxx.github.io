@@ -1766,7 +1766,7 @@ article:last-child .post-eof {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ffe4ff;
+  background: #d57d87;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2868,11 +2868,7 @@ body {
   padding: 30px 60px 30px 60px;
   background: rgba(255,255,255,0.8) none repeat scroll !important;
 }
-.header-inner {
-  opacity: 1;
-}
 .sidebar-active {
-  background: #fff;
   opacity: 0.8;
 }
 .footer {

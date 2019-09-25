@@ -70,7 +70,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/beats.png">
 <meta property="og:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/wwwcache_kibana.png">
-<meta property="og:updated_time" content="2019-09-12T02:40:15.768Z">
+<meta property="og:updated_time" content="2019-09-25T10:18:38.585Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="filebeat.yml配置详解">
 <meta name="twitter:description" content="filebeat.yml配置详解">
@@ -303,7 +303,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-09-12 10:40:15" itemprop="dateModified" datetime="2019-09-12T10:40:15+08:00">2019-09-12</time>
+                <time title="修改时间：2019-09-25 18:18:38" itemprop="dateModified" datetime="2019-09-25T18:18:38+08:00">2019-09-25</time>
               </span>
             
           
@@ -352,7 +352,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>2.5k</span>
+              <span>2.4k</span>
             </span>
           
 
@@ -374,14 +374,46 @@
 <p>filebeat 的原理是开启一个 prospectors(收割者)，对文件逐行进行采集。</p>
 <h4 id="2-示例文件及配置解析"><a href="#2-示例文件及配置解析" class="headerlink" title="2.示例文件及配置解析"></a>2.示例文件及配置解析</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">filebeat.prospectors:</span>			<span class="comment">#采集 abc.com 下 nginx 的 access 日志 </span></span><br><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwlog/nginx/abc.com.access.log</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["nginx_access"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
 
-<p>filebeat.prospectors:        文件开头指定 filebeat 的采集方式，此处使用 prospectors</p>
-<p>type : log                             类型为：log</p>
-<p>enabled: true                     true 为开启，false 为关闭</p>
-<p>paths:                                 指定路径</p>
-<p>tags:                                    打标签，自定义名称，为后续在kibana查看时提供过滤与分类的效果</p>
-<p>tail_files: true                     开启此项，代表采集从文件最底部开始，选择 false 时 filebeat 会从文件头部开始采集</p>
-<p>scan_frequency: 30s         对文件的扫描间隔（每30秒扫描一次文件是否改动）</p>
-<p>fields:                                  添加字段（用于 elasticsearch 过滤、分类，以及 kibana 中查看）</p>
+<table>
+<thead>
+<tr>
+<th>参数选项</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>filebeat.prospectors</td>
+<td>文件开头指定 filebeat 的采集方式，此处使用 prospectors</td>
+</tr>
+<tr>
+<td>type : log</td>
+<td>类型为：log</td>
+</tr>
+<tr>
+<td>enabled: true</td>
+<td>true 为开启，false 为关闭</td>
+</tr>
+<tr>
+<td>paths:</td>
+<td>指定路径</td>
+</tr>
+<tr>
+<td>tags:</td>
+<td>打标签，自定义名称，为后续在kibana查看时提供过滤与分类的效果</td>
+</tr>
+<tr>
+<td>tail_files: true</td>
+<td>开启此项，代表采集从文件最底部开始，选择 false 时 filebeat 会从文件头部开始采集</td>
+</tr>
+<tr>
+<td>scan_frequency: 30s</td>
+<td>对文件的扫描间隔（每30秒扫描一次文件是否改动，根据实际情况改动）</td>
+</tr>
+<tr>
+<td>fields:</td>
+<td>添加字段（用于 elasticsearch 过滤、分类，以及 kibana 中查看）</td>
+</tr>
+</tbody></table>
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span>					<span class="comment">#采集 abc.com 下 nginx 的 error 日志</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwlog/nginx/abc.com.error.log</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["nginx_error"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
 
 <figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span>					<span class="comment">#采集 abc.com 下 nginx 的 cache 日志</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwcache/abc.com.cache/application.log</span></span><br><span class="line">  <span class="string">multiline.pattern:</span> <span class="string">'^[0-9]&#123;4&#125;/[0-9]&#123;2&#125;/[0-9]&#123;2&#125;'</span></span><br><span class="line">  <span class="string">multiline.negate:</span> <span class="literal">true</span></span><br><span class="line">  <span class="string">multiline.match:</span> <span class="string">after</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["wwwcache"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
@@ -516,7 +548,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -539,7 +571,11 @@
         
           
         
-        <span class="site-state-item-count">4</span>
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -572,7 +608,17 @@
         
           
         
-        <span class="site-state-item-count">9</span>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -618,7 +664,7 @@
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">17k</span>
+    <span title="站点总字数">24k</span>
 </div>
 
 
@@ -667,7 +713,7 @@
 
     
   
-  <script color='255,215,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script color='255,215,0' opacity='0.8' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
   <script src="/lib/anime.min.js?v=3.1.0"></script>
   <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
   <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
@@ -755,7 +801,7 @@ NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
             $.extend(
                 '', {
                     single:true,
-                    root:'/calendar/'
+                    root:''
                 }
             )
         );

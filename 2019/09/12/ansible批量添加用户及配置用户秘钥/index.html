@@ -68,7 +68,7 @@
 <meta property="og:site_name" content="NewPants">
 <meta property="og:description" content="使用自动化运维工具 ansible 为多台服务器添加用户，并配置秘钥。">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-20T03:56:09.266Z">
+<meta property="og:updated_time" content="2019-09-25T10:17:46.947Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ansible批量添加用户及配置用户秘钥">
 <meta name="twitter:description" content="使用自动化运维工具 ansible 为多台服务器添加用户，并配置秘钥。">
@@ -300,7 +300,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-09-20 11:56:09" itemprop="dateModified" datetime="2019-09-20T11:56:09+08:00">2019-09-20</time>
+                <time title="修改时间：2019-09-25 18:17:46" itemprop="dateModified" datetime="2019-09-25T18:17:46+08:00">2019-09-25</time>
               </span>
             
           
@@ -391,20 +391,56 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[defaults]</span><br><span class="line">inventory       =/etc/ansible/playbooks/hosts</span><br><span class="line">remote_user     =root</span><br><span class="line">private_key_file=/root/.ssh/my_private</span><br><span class="line">host_key_checking=False</span><br></pre></td></tr></table></figure>
 
 <p>如果不在这里配置的话，等要写playbook时，是需要再配置的。所以我们这里进行默认的统一配置，有非常多可以增加的项目。这里只说明，如何使用本地的私钥来连接目标服务器上的公钥。（几台服务器上的公钥都是统一的，相当于一把钥匙开好几个锁）</p>
-<p>inventory：    指定hosts文件的路径</p>
-<p>remote_user：    远程连接使用的用户名，此处为root</p>
-<p>private_key_file：    私钥文件路径</p>
-<p>host_key_checking：    首次连接会提示输入yes来确认连接主机。这里选择False来关闭这个提示。</p>
+<table>
+<thead>
+<tr>
+<th>参数选项</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>inventory</td>
+<td>指定hosts文件的路径</td>
+</tr>
+<tr>
+<td>remote_user</td>
+<td>远程连接使用的用户名，此处为root</td>
+</tr>
+<tr>
+<td>private_key_file</td>
+<td>私钥文件路径</td>
+</tr>
+<tr>
+<td>host_key_checking</td>
+<td>首次连接会提示输入yes来确认连接主机。这里选择False来关闭这个提示。</td>
+</tr>
+</tbody></table>
 <h4 id="3-编写playbook"><a href="#3-编写playbook" class="headerlink" title="3.编写playbook"></a>3.编写playbook</h4><p>playbook就是ansible的剧本，也是使用ansible中最重要的一环。我们把所有要进行操作的步骤，统一放在yaml文件中，让ansible去执行。</p>
 <p>yaml文件格式编写时要注意缩进，因为yaml文件对缩进的要求是非常严格的。刚刚入门编写yaml可能会被缩进逼疯，经常调试半天还是有错误。不过只要多编写几个，熟悉了套路，yaml文件的优势就慢慢体现出来。主要是体现在易于阅读和更改。对后期维护等操作非常的有益。</p>
 <p>下面直接贴出我的adduser.yaml配置文件，然后对文件一一进行解读：</p>
 <h5 id="3-1-adduser-yaml"><a href="#3-1-adduser-yaml" class="headerlink" title="3.1 adduser.yaml"></a>3.1 adduser.yaml</h5><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">- name:</span> <span class="string">增加指定用户并添加秘钥</span> <span class="string">清理自动生成的秘钥</span> </span><br><span class="line">  <span class="comment">#指定远程命令的主机组</span></span><br><span class="line"><span class="attr">  hosts:</span> <span class="string">all</span> </span><br><span class="line">  <span class="comment">#动作</span></span><br><span class="line"><span class="attr">  tasks:</span> </span><br><span class="line"><span class="attr">    - name:</span> <span class="string">增加用户user01</span></span><br><span class="line">      <span class="comment">#使用模块user</span></span><br><span class="line"><span class="attr">      user:</span> </span><br><span class="line">         <span class="comment">#指定增加用户名为：</span></span><br><span class="line"><span class="attr">         name:</span> <span class="string">user01</span> </span><br><span class="line">         <span class="comment">#增加用户说明</span></span><br><span class="line"><span class="attr">         comment:</span> <span class="string">developer</span> </span><br><span class="line">         <span class="comment">#用户所属组</span></span><br><span class="line"><span class="attr">         group:</span> <span class="string">dev</span> </span><br><span class="line">         <span class="comment">#登陆所使用的shell路径</span></span><br><span class="line"><span class="attr">         shell:</span> <span class="string">/bin/bash</span> </span><br><span class="line">         <span class="comment">#是否在.ssh/路径下生成id_rsa及id_rsa.pub</span></span><br><span class="line"><span class="attr">         generate_ssh_key:</span> <span class="literal">yes</span> </span><br><span class="line">         <span class="comment">#指定生成的路径和名称，公钥自动以.pub结尾</span></span><br><span class="line"><span class="attr">         ssh_key_file:</span> <span class="string">.ssh/id_rsa</span> </span><br><span class="line">         <span class="comment">#默认值present，表示用户需要存在</span></span><br><span class="line"><span class="attr">         state:</span> <span class="string">present</span> </span><br><span class="line"><span class="attr">    - name:</span> <span class="string">复制本机192.168.50.50指定路径文件到目标服务器上</span></span><br><span class="line">      <span class="comment">#使用copy模块</span></span><br><span class="line"><span class="attr">      copy:</span> </span><br><span class="line">         <span class="comment">#源路径，本机文件路径</span></span><br><span class="line"><span class="attr">         src:</span> <span class="string">/home/padim/.ssh/authorized_keys</span> </span><br><span class="line">         <span class="comment">#目标主机路径</span></span><br><span class="line"><span class="attr">         dest:</span> <span class="string">/home/user01/.ssh/authorized_keys</span> </span><br><span class="line">         <span class="comment">#文件所有人</span></span><br><span class="line"><span class="attr">         owner:</span> <span class="string">user01</span> </span><br><span class="line">         <span class="comment">#文件所有组</span></span><br><span class="line"><span class="attr">         group:</span> <span class="string">dev</span> </span><br><span class="line">         <span class="comment">#文件权限</span></span><br><span class="line"><span class="attr">         mode:</span> <span class="string">'0600'</span> </span><br><span class="line"><span class="attr">    - name:</span> <span class="string">清理自动生成的id_rsa文件</span> </span><br><span class="line">      <span class="comment">#使用file模块</span></span><br><span class="line"><span class="attr">      file:</span> </span><br><span class="line">         <span class="comment">#指定路径，删除多个文件时使用，&#123;&#123;item&#125;&#125;为变量，不可变</span></span><br><span class="line"><span class="attr">         path:</span> <span class="string">'/home/user01/.ssh/<span class="template-variable">&#123;&#123; item &#125;&#125;</span>'</span> </span><br><span class="line">         <span class="comment">#状态，删除</span></span><br><span class="line"><span class="attr">         state:</span> <span class="string">absent</span> </span><br><span class="line">         <span class="comment">#定义变量的多个值</span></span><br><span class="line"><span class="attr">      with_items:</span></span><br><span class="line"><span class="bullet">         -</span> <span class="string">id_rsa</span></span><br><span class="line"><span class="bullet">         -</span> <span class="string">id_rsa.pub</span></span><br></pre></td></tr></table></figure>
 
 <p>以上文件基本都有注释了，这里说明几个地方：</p>
-<p><strong>name</strong>：类似整个文件的说明，随意填写，清楚表达即可。</p>
-<p><strong>tasks</strong>：步骤。每一个tasks为一步，比如上面就是在一步里面完成创建user01。如果要再删除user01，可以在下面再新建一个tasks用来删除。</p>
-<p><strong>tasks中的name</strong>：一样是说明性语句，可随意填写。执行playbook时这项说明语句会打印在屏幕上，告诉你playbook的进展情况。</p>
-<hr>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>参数说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>name</strong></td>
+<td>类似整个文件的说明，随意填写，清楚表达即可。</td>
+</tr>
+<tr>
+<td><strong>tasks</strong></td>
+<td>步骤。每一个tasks为一步，比如上面就是在一步里面完成创建user01。如果要再删除user01，可以在下面再新建一个tasks用来删除。</td>
+</tr>
+<tr>
+<td><strong>tasks中的name</strong></td>
+<td>一样是说明性语句，可随意填写。执行playbook时这项说明语句会打印在屏幕上，告诉你playbook的进展情况。</td>
+</tr>
+</tbody></table>
 <p>编辑好playbook后直接检查并运行该文件就可以了，命令如下：</p>
 <p>检查(使用check参数)：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@padim ~]#ansible-playbook --check adduser.yaml</span><br></pre></td></tr></table></figure>
@@ -475,6 +511,10 @@
 
             <div class="post-nav-prev post-nav-item">
               
+                <a href="/2019/09/21/多端更新hexo博客/" rel="prev" title="多端更新hexo博客">
+                  多端更新hexo博客 <i class="fa fa-chevron-right"></i>
+                </a>
+              
             </div>
           </div>
         
@@ -543,7 +583,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -566,7 +606,11 @@
         
           
         
-        <span class="site-state-item-count">4</span>
+          
+        
+          
+        
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -599,7 +643,17 @@
         
           
         
-        <span class="site-state-item-count">9</span>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
@@ -645,7 +699,7 @@
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
     
-    <span title="站点总字数">17k</span>
+    <span title="站点总字数">24k</span>
 </div>
 
 
@@ -694,7 +748,7 @@
 
     
   
-  <script color='255,215,0' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script color='255,215,0' opacity='0.8' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
   <script src="/lib/anime.min.js?v=3.1.0"></script>
   <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
   <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
@@ -782,7 +836,7 @@ NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
             $.extend(
                 '', {
                     single:true,
-                    root:'/calendar/'
+                    root:''
                 }
             )
         );

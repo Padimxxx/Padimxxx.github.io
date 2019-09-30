@@ -60,13 +60,13 @@
   };
 </script>
 
-  <meta name="description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。">
+  <meta name="description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。">
 <meta name="keywords" content="zabbix,python,自动化运维">
 <meta property="og:type" content="article">
 <meta property="og:title" content="利用zabbix远程执行python脚本">
 <meta property="og:url" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/index.html">
 <meta property="og:site_name" content="NewPants">
-<meta property="og:description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。">
+<meta property="og:description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/agent_remote.png">
 <meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/zabbix_get_v.png">
@@ -81,10 +81,10 @@
 <meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/create6.png">
 <meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/report1.png">
 <meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/del_log.png">
-<meta property="og:updated_time" content="2019-09-29T06:55:31.859Z">
+<meta property="og:updated_time" content="2019-09-30T03:52:46.716Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="利用zabbix远程执行python脚本">
-<meta name="twitter:description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。">
+<meta name="twitter:description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。">
 <meta name="twitter:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/agent_remote.png">
   <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
   <link rel="canonical" href="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/">
@@ -314,7 +314,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-09-29 14:55:31" itemprop="dateModified" datetime="2019-09-29T14:55:31+08:00">2019-09-29</time>
+                <time title="修改时间：2019-09-30 11:52:46" itemprop="dateModified" datetime="2019-09-30T11:52:46+08:00">2019-09-30</time>
               </span>
             
           
@@ -363,7 +363,7 @@
               
                 <span class="post-meta-item-text">本文字数：</span>
               
-              <span>3.6k</span>
+              <span>3.7k</span>
             </span>
           
 
@@ -376,17 +376,26 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>本文通过zabbix与python结合，实现对服务器上日志自动化的清理。</p><p>服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。</p><a id="more"></a>
+        <p>本文通过zabbix与python结合，实现对服务器上日志自动化的清理。</p><a id="more"></a>
+<!-- toc -->
 
+<ul>
+<li><a href="#开启zabbix_agent端远程命令权限">开启zabbix_agent端远程命令权限</a></li>
+<li><a href="#zabbix_get验证连通性">zabbix_get验证连通性</a></li>
+<li><a href="#编写python脚本">编写python脚本</a></li>
+<li><a href="#为触发器添加动作">为触发器添加动作</a></li>
+<li><a href="#效果图">效果图</a></li>
+</ul>
+<!-- tocstop -->
+
+<p>服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。</p>
 <p>不过一段时间下来，web产生的大量日志就是一个头疼的问题了。一共就那么几十G，再放上web程序，日志没几天就占满了磁盘空间。这些日志很多都不是那么重要的，基本是记录操作记录的信息，所以时间比较久远的日志参考意义就不大了，而且假如真的需要保存这些信息的话，其实已经可以通过elk采集到我们需要保存的服务器上进行备份。</p>
-<p>该文目录：</p>
-<p>[TOC]</p>
-<h4 id="开启zabbix-agent端远程命令权限"><a href="#开启zabbix-agent端远程命令权限" class="headerlink" title="开启zabbix_agent端远程命令权限"></a>开启zabbix_agent端远程命令权限</h4><p>首先第一步就是要先开启agent端允许server端远程执行命令的权限。找到配置文件，每个人配置文件名称可能不通。我这里是windows主机，名称为：“zabbix_agentd.win.conf”。找到如下图这行：</p>
+<h4><span id="开启zabbix_agent端远程命令权限">开启zabbix_agent端远程命令权限</span></h4><p>首先第一步就是要先开启agent端允许server端远程执行命令的权限。找到配置文件，每个人配置文件名称可能不通。我这里是windows主机，名称为：“zabbix_agentd.win.conf”。找到如下图这行：</p>
 <p><img src="/2019/09/27/利用zabbix远程执行python脚本/agent_remote.png" alt></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#默认0代表关闭，1为启用</span><br><span class="line">EnableRemoteCommands=1</span><br></pre></td></tr></table></figure>
 
 <p>设置保存后，需要<strong>重启</strong>对应的agent端的zabbix服务才会生效。</p>
-<h4 id="zabbix-get验证连通性"><a href="#zabbix-get验证连通性" class="headerlink" title="zabbix_get验证连通性"></a>zabbix_get验证连通性</h4><p>zabbix_get是zabbix官方提供的一个工具。将这个工具安装在server端，即可实现对agent端的数据采集。通过这个工具可以测试我们的配置是否有问题。<a href="https://www.zabbix.com/documentation/3.0/manpages/zabbix_get" target="_blank" rel="noopener">zabbix_get官方文档</a></p>
+<h4><span id="zabbix_get验证连通性">zabbix_get验证连通性</span></h4><p>zabbix_get是zabbix官方提供的一个工具。将这个工具安装在server端，即可实现对agent端的数据采集。通过这个工具可以测试我们的配置是否有问题。<a href="https://www.zabbix.com/documentation/3.0/manpages/zabbix_get" target="_blank" rel="noopener">zabbix_get官方文档</a></p>
 <p>如果没有安装该工具，通过yum或者下载镜像方式安装，yum安装：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y zabbix-get.x86_64</span><br></pre></td></tr></table></figure>
 
@@ -397,14 +406,14 @@
 <p>我们刚才已经开启了agent端的远程执行功能，现在直接在server端测试一下：</p>
 <p><img src="/2019/09/27/利用zabbix远程执行python脚本/zabbix_get.png" alt></p>
 <p>这是一个获取所有cpu平均1分钟负载值的命令。看到我们已经返回了结果，证明连通正常，可以远程执行命令。</p>
-<h4 id="编写python脚本"><a href="#编写python脚本" class="headerlink" title="编写python脚本"></a>编写python脚本</h4><p>完成上面两个步骤后，zabbix方面可以先放一放，因为这个才是我们最重要的步骤，编写python脚本。话不多说，直接先上脚本：</p>
+<h4><span id="编写python脚本">编写python脚本</span></h4><p>完成上面两个步骤后，zabbix方面可以先放一放，因为这个才是我们最重要的步骤，编写python脚本。话不多说，直接先上脚本：</p>
 <p><strong>注：本脚本在windows主机，python3的环境下运行。若为python2，脚本中的一些模块可能会运行报错，建议先测试一下正常后再使用。</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># encoding:utf-8</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">功能:</span></span><br><span class="line"><span class="string">	1）判断文件/文件夹最后修改日期</span></span><br><span class="line"><span class="string">	2）按照if语句删除（天数作为条件）</span></span><br><span class="line"><span class="string">说明：此脚本由内网40.17zabbix服务器触发触发器执行动作，远程执行</span></span><br><span class="line"><span class="string">	</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line">logging.basicConfig(level=logging.INFO,</span><br><span class="line">                    filename=<span class="string">"C:/python/python_scripts/del_dir.log"</span> </span><br><span class="line">                    <span class="comment">#有了filename参数就不会直接输出显示到控制台，而是直接写入文件</span></span><br><span class="line">                    )</span><br><span class="line"></span><br><span class="line"><span class="comment">#定义删除文件夹的函数 del_directory(),参数my_path</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">del_directory</span><span class="params">(my_path)</span>:</span></span><br><span class="line">	<span class="comment">#定义日期时间格式</span></span><br><span class="line">	format=<span class="string">'%Y-%m-%d'</span></span><br><span class="line">	<span class="comment">#获取当前的时间转换成字符串格式	</span></span><br><span class="line">	current_time=str(time.strftime(format,time.localtime()))</span><br><span class="line">	<span class="comment">#删除时间，方便日志查看</span></span><br><span class="line">	del_time=time.strftime(<span class="string">"%Y-%m-%d %H:%M:%S"</span>,time.localtime())</span><br><span class="line">	<span class="comment">#遍历目标路径下的文件夹</span></span><br><span class="line">	<span class="keyword">for</span> d_f_name <span class="keyword">in</span> os.listdir(my_path):</span><br><span class="line">		<span class="comment">#获取文件绝对路径</span></span><br><span class="line">		full_dirct_path=os.path.join(my_path,d_f_name)</span><br><span class="line">		<span class="comment">#获取文件最后修改时间		</span></span><br><span class="line">		modifiedTime=time.localtime(os.stat(full_dirct_path).st_mtime)</span><br><span class="line">		mTime=str(time.strftime(format,modifiedTime))			</span><br><span class="line">		<span class="comment">#判断修改日期距离今天为止的间隔时间（天）</span></span><br><span class="line">		interval_time=datetime.datetime.strptime(current_time,format) - datetime.datetime.strptime(mTime,format)</span><br><span class="line">		<span class="comment">#判断修改日期距离今天是否大于x天</span></span><br><span class="line">		<span class="keyword">if</span> interval_time.days &gt; <span class="number">5</span>:</span><br><span class="line">			<span class="comment">#判断是否为文件夹</span></span><br><span class="line">			<span class="keyword">if</span> os.path.isdir(full_dirct_path):</span><br><span class="line">				<span class="comment">#删除非空文件夹 注：直接删除整个非空文件夹</span></span><br><span class="line">				shutil.rmtree(full_dirct_path)</span><br><span class="line">				logging.info(del_time+<span class="string">" 已成功删除[目录]: "</span>+full_dirct_path)</span><br><span class="line">			<span class="keyword">else</span>:</span><br><span class="line">				<span class="comment">#删除文件</span></span><br><span class="line">				os.remove(full_dirct_path)</span><br><span class="line">				logging.info(del_time+<span class="string">" 已成功删除_文件_: "</span>+full_dirct_path)</span><br><span class="line"></span><br><span class="line">del_directory(<span class="string">'D:\\wwwlog\\commctrl\\dir1\\'</span>)</span><br><span class="line">del_directory(<span class="string">'D:\\wwwlog\\dir2\\'</span>)</span><br></pre></td></tr></table></figure>
 
 <p>基本上面每一步的作用，我都有在注释里面标注了。主要是运用几个模块，定义了一个删除文件和目录的函数。最后再实例化。</p>
 <p>唯一需要注意的是最下面实例化，添加路径的时候，一定要写对绝对路径，不要删错文件就好。</p>
 <p>编写完毕测试正常后，我们把脚本放在一个目录下，我这里放在“C:/python/python_scripts/del_dir_20.py”</p>
-<h4 id="为触发器添加动作"><a href="#为触发器添加动作" class="headerlink" title="为触发器添加动作"></a>为触发器添加动作</h4><p>首先要在zabbix web的界面建好我们的触发器（我这边已经建好了，是一个D盘容量小于百分之5就触发的报警）：</p>
+<h4><span id="为触发器添加动作">为触发器添加动作</span></h4><p>首先要在zabbix web的界面建好我们的触发器（我这边已经建好了，是一个D盘容量小于百分之5就触发的报警）：</p>
 <p><img src="/2019/09/27/利用zabbix远程执行python脚本/triggers.png" alt></p>
 <p>触发器好了以后，我们为触发器添加一个动作，configuration-&gt;Actions-&gt;Event source(选择Triggers)-&gt;Create action。因为我们想要触发触发器后执行脚本，所以创建动作时，选择Triggers。</p>
 <p><img src="/2019/09/27/利用zabbix远程执行python脚本/create_action.png" alt></p>
@@ -422,7 +431,7 @@
 <p>Target list的部分忘记标注了，这里记得新建一个把我们要执行脚本的主机添加进来，选择host-&gt;选择主机：</p>
 <p><img src="/2019/09/27/利用zabbix远程执行python脚本/create6.png" alt></p>
 <hr>
-<h4 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h4><p>以上一切做好后，就可以静静的等待触发器被触发，自动远程执行我们的python脚本了。</p>
+<h4><span id="效果图">效果图</span></h4><p>以上一切做好后，就可以静静的等待触发器被触发，自动远程执行我们的python脚本了。</p>
 <p>如果报警触发，我们可以在Reports-&gt;Action log中查看我们的动作详情，我们看到触发器触发后，自动就恢复了，不需要人工参与：</p>
 <p><img src="/2019/09/27/利用zabbix远程执行python脚本/report1.png" alt></p>
 <p>如果想看什么时间都删除了哪些文件，可以看看在目标服务器上，我们利用python输出的日志内容：</p>
@@ -519,11 +528,6 @@
 
   <aside class="sidebar">
     <div class="sidebar-inner">
-        
-        
-        
-        
-      
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
@@ -536,8 +540,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#开启zabbix-agent端远程命令权限"><span class="nav-number">1.</span> <span class="nav-text">开启zabbix_agent端远程命令权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zabbix-get验证连通性"><span class="nav-number">2.</span> <span class="nav-text">zabbix_get验证连通性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编写python脚本"><span class="nav-number">3.</span> <span class="nav-text">编写python脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为触发器添加动作"><span class="nav-number">4.</span> <span class="nav-text">为触发器添加动作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#效果图"><span class="nav-number">5.</span> <span class="nav-text">效果图</span></a></li></ol></div>
-        
       </div>
       <!--/noindex-->
 
@@ -648,6 +650,9 @@
 
 
 <!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div><!-- CloudCalendar -->
 <div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
 	<div class="widget" id="CloudCalendar"></div>
 </div>
@@ -781,6 +786,23 @@
   
 
   
+<!-- calendar widget -->
+
+    <script src=""></script>
+    <script src=""></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:''
+                }
+            )
+        );
+    });
+    </script>
+
 
 
 <script>

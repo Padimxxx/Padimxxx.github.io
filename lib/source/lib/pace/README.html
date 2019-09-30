@@ -60,17 +60,17 @@
   };
 </script>
 
-  <meta name="description" content="Progress bar for NexTInstallationIf you want to use the CDN instead of clone this repo, please jump to the Step 3.">
+  <meta name="description" content="for Installation">
 <meta property="og:type" content="website">
 <meta property="og:title" content="NewPants">
 <meta property="og:url" content="http://newpants.top/lib/source/lib/pace/README.html">
 <meta property="og:site_name" content="NewPants">
-<meta property="og:description" content="Progress bar for NexTInstallationIf you want to use the CDN instead of clone this repo, please jump to the Step 3.">
+<meta property="og:description" content="for Installation">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:updated_time" content="2019-08-30T09:50:29.707Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="NewPants">
-<meta name="twitter:description" content="Progress bar for NexTInstallationIf you want to use the CDN instead of clone this repo, please jump to the Step 3.">
+<meta name="twitter:description" content="for Installation">
   <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
   <link rel="canonical" href="http://newpants.top/lib/source/lib/pace/README">
 
@@ -360,23 +360,23 @@
       
       <div class="post-body">
         
-          <h1 align="center"><a href="https://github.com/HubSpot/pace" target="_blank" rel="noopener">Progress bar</a> for <a href="https://github.com/theme-next" target="_blank" rel="noopener">NexT</a></h1><h1 align="center">Installation</h1><h2>If you want to use the CDN instead of clone this repo, please jump to the Step 3.</h2><a id="more"></a>
+          <h1 align="center"><span id="progress-bar-for-next"> for </span></h1><h1 align="center"><span id="installation">Installation</span></h1><a id="more"></a>
 
 
 
+<h2><span id="if-you-want-to-use-the-cdn-instead-of-clone-this-repo-please-jump-to-the-step-3">If you want to use the CDN instead of clone this repo, please jump to the Step 3.</span></h2>
 
-
-<h2 align="center">Step 1 &rarr; Go to NexT dir</h2>
+<h2 align="center"><span id="step-1-rarr-go-to-next-dir">Step 1 &rarr; Go to NexT dir</span></h2>
 
 <p>Change dir to <strong>NexT</strong> directory. There must be <code>layout</code>, <code>source</code>, <code>languages</code> and other directories:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> themes/next</span><br><span class="line">$ ls</span><br><span class="line">bower.json  _config.yml  docs  gulpfile.coffee  languages  layout  LICENSE.md  package.json  README.md  scripts  <span class="built_in">source</span>  <span class="built_in">test</span></span><br></pre></td></tr></table></figure>
 
-<h2 align="center">Step 2 &rarr; Get module</h2>
+<h2 align="center"><span id="step-2-rarr-get-module">Step 2 &rarr; Get module</span></h2>
 
 <p>Install module to <code>source/lib</code> directory:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/theme-next/theme-next-pace <span class="built_in">source</span>/lib/pace</span><br></pre></td></tr></table></figure>
 
-<h2 align="center">Step 3 &rarr; Set it up</h2>
+<h2 align="center"><span id="step-3-rarr-set-it-up">Step 3 &rarr; Set it up</span></h2>
 
 <p>Enable module in <strong>NexT</strong> <code>_config.yml</code> file and select your theme:</p>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">pace:</span></span><br><span class="line"><span class="attr">  enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="comment"># Themes list:</span></span><br><span class="line">  <span class="comment"># big-counter | bounce | barber-shop | center-atom | center-circle | center-radar | center-simple</span></span><br><span class="line">  <span class="comment"># corner-indicator | fill-left | flat-top | flash | loading-bar | mac-osx | material | minimal</span></span><br><span class="line"><span class="attr">  theme:</span> <span class="string">minimal</span></span><br></pre></td></tr></table></figure>
@@ -384,7 +384,7 @@
 <p><strong>And, if you wants to use the CDN, then need to set:</strong> (you also need to find your corresponding theme css link in <a href="https://www.jsdelivr.com/package/npm/pace-js?path=themes" target="_blank" rel="noopener">jsdelivr</a>)</p>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">vendors:</span></span><br><span class="line">  <span class="string">...</span></span><br><span class="line"><span class="attr">  pace:</span> <span class="string">//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js</span></span><br><span class="line"><span class="attr">  pace_css:</span> <span class="string">//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css</span></span><br></pre></td></tr></table></figure>
 
-<h1 align="center">Update</h1>
+<h1 align="center"><span id="update">Update</span></h1>
 
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> themes/next/<span class="built_in">source</span>/lib/pace</span><br><span class="line">$ git pull</span><br></pre></td></tr></table></figure>
 
@@ -484,11 +484,6 @@
 
   <aside class="sidebar">
     <div class="sidebar-inner">
-        
-        
-        
-        
-      
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
@@ -501,8 +496,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">1.</span> <span class="nav-text">Progress bar for NexT</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">2.</span> <span class="nav-text">Installation</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#null"><span class="nav-number">2.1.</span> <span class="nav-text">If you want to use the CDN instead of clone this repo, please jump to the Step 3.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#null"><span class="nav-number">2.2.</span> <span class="nav-text">Step 1 → Go to NexT dir</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#null"><span class="nav-number">2.3.</span> <span class="nav-text">Step 2 → Get module</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#null"><span class="nav-number">2.4.</span> <span class="nav-text">Step 3 → Set it up</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#null"><span class="nav-number">3.</span> <span class="nav-text">Update</span></a></li></ol></div>
-        
       </div>
       <!--/noindex-->
 
@@ -613,6 +606,9 @@
 
 
 <!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div><!-- CloudCalendar -->
 <div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
 	<div class="widget" id="CloudCalendar"></div>
 </div>
@@ -746,6 +742,23 @@
   
 
   
+<!-- calendar widget -->
+
+    <script src=""></script>
+    <script src=""></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:''
+                }
+            )
+        );
+    });
+    </script>
+
 
 
 <script>

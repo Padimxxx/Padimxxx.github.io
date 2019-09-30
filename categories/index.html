@@ -366,11 +366,6 @@
 
   <aside class="sidebar">
     <div class="sidebar-inner">
-        
-        
-        
-        
-      
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
@@ -493,6 +488,9 @@
 
 
 <!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div><!-- CloudCalendar -->
 <div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
 	<div class="widget" id="CloudCalendar"></div>
 </div>
@@ -626,6 +624,23 @@
   
 
   
+<!-- calendar widget -->
+
+    <script src=""></script>
+    <script src=""></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:''
+                }
+            )
+        );
+    });
+    </script>
+
 
 
 <script>

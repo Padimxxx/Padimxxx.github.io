@@ -1254,6 +1254,7 @@ pre .javascript .function {
 }
 .use-motion .post-header {
   opacity: 0;
+  color: #ff8c00;
 }
 .use-motion .post-body {
   opacity: 0;
@@ -1766,7 +1767,7 @@ article:last-child .post-eof {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ffec09;
+  background: #ffff62;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -1911,62 +1912,6 @@ article:last-child .post-eof {
 }
 .sidebar-toggle:hover .sidebar-toggle-line {
   background: #87daff;
-}
-.post-toc-wrap {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-.post-toc {
-  font-size: 0.875em;
-}
-.post-toc ol {
-  list-style: none;
-  margin: 0;
-  padding: 0 2px 5px 10px;
-  text-align: left;
-}
-.post-toc ol > ol {
-  padding-left: 0;
-}
-.post-toc ol a {
-  transition-delay: 0s;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
-  border-bottom-color: #222;
-  color: #222;
-  transition-property: all;
-}
-.post-toc ol a:hover {
-  border-bottom-color: #222;
-  color: #222;
-}
-.post-toc .nav-item {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 1.8;
-}
-.post-toc .nav .nav-child {
-  display: none;
-}
-.post-toc .nav .active > .nav-child {
-  display: block;
-}
-.post-toc .nav .active-current > .nav-child {
-  display: block;
-}
-.post-toc .nav .active-current > .nav-child > .nav-item {
-  display: block;
-}
-.post-toc .nav .active > a {
-  border-bottom-color: #222;
-  color: #222;
-}
-.post-toc .nav .active-current > a {
-  color: #222;
-}
-.post-toc .nav .active-current > a:hover {
-  color: #222;
 }
 .site-state {
   display: flex;
@@ -2804,6 +2749,130 @@ hr {
 }
 .cal tbody a {
 /*有提交的天*/
+  background-color: #baf786;
+  color: #fff;
+  display: block;
+  border-bottom: 0px solid transparent;
+  font-weight: 700;
+}
+.cal tbody .cal-today {
+/*今天*/
+  color: #a722ff;
+  font-weight: bold;
+}
+.cal .cal-gray {
+/*没提交的天*/
+  color: #808080;
+}
+.cal th,
+.cal td {
+  font-weight: normal;
+  line-height: 2.5625;
+  padding: 0;
+  text-align: center;
+}
+.cal .cal-foot {
+/*底栏箭头切换月*/
+  color: color-link;
+}
+.cal-title a:hover,
+.cal-prev:hover,
+.cal-next:hover,
+.cal .cal-foot:hover,
+.cal .cal-foot:focus {
+/*底栏箭头切换月-鼠标覆盖*/
+  background-color: color-link;
+  color: #fff;
+  cursor: pointer;
+}
+/*鼠标覆盖后的颜色*/
+.cal tbody a:hover,
+.cal tbody a:focus {
+  background-color: #68dc6e;
+  color: #fff;
+  cursor: pointer;
+}
+#CloudCalendar {
+/*全句背景色*/
+  background-color: #eee;
+}
+#CloudCalendar a {
+  text-decoration: none;
+}
+.cal-head {
+  position: relative;
+  height: 20px;
+  padding: 8px 6px 2px 6px;
+}
+.cal-prev,
+.cal-next {
+  position: absolute;
+  top: 9px;
+  width: 9px;
+  height: 10px;
+  padding: 3px 4px;
+  border: 1px solid transparent;
+  color: #fff;
+  outline: 0;
+}
+/*上下页箭头*/
+.cal-prev {
+  left: 8px;
+}
+.cal-prev:before {
+  border-right: 9px solid #333;
+}
+.cal-next {
+  right: 8px;
+}
+.cal-next:before {
+  border-left: 9px solid #333;
+}
+.cal-prev:before,
+.cal-next:before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+.cal-title {
+  width: 120px;
+  margin: 0 auto;
+  color: #808080;
+  font: bold 14px/18px Arial;
+  text-align: center;
+}
+.cal-title a {
+  border: 1px solid transparent;
+/*年份颜色*/
+  color: color-link;
+}
+.cal,
+.cal th,
+.cal td {
+  border: 1px solid #eee;
+}
+.cal {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-width: 1px 0 0 1px;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+}
+.cal th {
+/*星期颜色*/
+  color: color-link;
+  border-width: 0 1px 1px 0;
+  font-weight: 700;
+}
+.cal td {
+  border-width: 0 1px 1px 0;
+}
+.cal tbody a {
+/*有提交的天*/
   background-color: #dc143c;
   color: #fff;
   display: block;
@@ -2873,4 +2942,13 @@ body {
 }
 .footer {
   opacity: 0.8;
+}
+.header {
+  width: 100%;
+}
+.container .main-inner {
+  width: 60%;
+}
+.content-wrap {
+  width: calc(100%);
 }

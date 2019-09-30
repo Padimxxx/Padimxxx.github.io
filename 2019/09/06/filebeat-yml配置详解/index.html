@@ -70,7 +70,7 @@
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/beats.png">
 <meta property="og:image" content="http://newpants.top/2019/09/06/filebeat-yml配置详解/wwwcache_kibana.png">
-<meta property="og:updated_time" content="2019-09-25T10:18:38.585Z">
+<meta property="og:updated_time" content="2019-09-30T03:50:35.259Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="filebeat.yml配置详解">
 <meta name="twitter:description" content="filebeat.yml配置详解">
@@ -303,7 +303,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2019-09-25 18:18:38" itemprop="dateModified" datetime="2019-09-25T18:18:38+08:00">2019-09-25</time>
+                <time title="修改时间：2019-09-30 11:50:35" itemprop="dateModified" datetime="2019-09-30T11:50:35+08:00">2019-09-30</time>
               </span>
             
           
@@ -365,14 +365,20 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>filebeat.yml配置详解</p>
-<a id="more"></a>
+        <p>filebeat.yml配置详解</p><a id="more"></a>
+<!-- toc -->
 
-<h4 id="1-filebeat介绍"><a href="#1-filebeat介绍" class="headerlink" title="1.filebeat介绍"></a>1.filebeat介绍</h4><p>filebeat 是 elastic beats 中的一个轻量型的采集器。beats 包含很多系列，如官网下图：</p>
+<ul>
+<li><a href="#1filebeat介绍">1.filebeat介绍</a></li>
+<li><a href="#2示例文件及配置解析">2.示例文件及配置解析</a></li>
+</ul>
+<!-- tocstop -->
+
+<h4><span id="1filebeat介绍">1.filebeat介绍</span></h4><p>filebeat 是 elastic beats 中的一个轻量型的采集器。beats 包含很多系列，如官网下图：</p>
 <p><img src="/2019/09/06/filebeat-yml配置详解/beats.png" alt="beat系列"></p>
 <p>基本从名字就可以看得出来其对应的功能。这里我们使用 filebeat 主要针对文件（也就是需要采集的log日志) 来进行采集。</p>
 <p>filebeat 的原理是开启一个 prospectors(收割者)，对文件逐行进行采集。</p>
-<h4 id="2-示例文件及配置解析"><a href="#2-示例文件及配置解析" class="headerlink" title="2.示例文件及配置解析"></a>2.示例文件及配置解析</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">filebeat.prospectors:</span>			<span class="comment">#采集 abc.com 下 nginx 的 access 日志 </span></span><br><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwlog/nginx/abc.com.access.log</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["nginx_access"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
+<h4><span id="2示例文件及配置解析">2.示例文件及配置解析</span></h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">filebeat.prospectors:</span>			<span class="comment">#采集 abc.com 下 nginx 的 access 日志 </span></span><br><span class="line"><span class="bullet">-</span> <span class="string">type</span> <span class="string">:</span> <span class="string">log</span></span><br><span class="line"><span class="attr">  enabled:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  paths:</span></span><br><span class="line"><span class="bullet">     -</span> <span class="string">/data/server/wwwlog/nginx/abc.com.access.log</span></span><br><span class="line"><span class="attr">  tags:</span> <span class="string">["nginx_access"]</span></span><br><span class="line"><span class="attr">  tail_files:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">  scan_frequency:</span> <span class="number">30</span><span class="string">s</span></span><br><span class="line"><span class="attr">  fields:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line"><span class="attr">    project:</span> <span class="string">abc.com</span></span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
@@ -513,11 +519,6 @@
 
   <aside class="sidebar">
     <div class="sidebar-inner">
-        
-        
-        
-        
-      
 
       <ul class="sidebar-nav motion-element">
         <li class="sidebar-nav-toc">
@@ -530,8 +531,6 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-filebeat介绍"><span class="nav-number">1.</span> <span class="nav-text">1.filebeat介绍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-示例文件及配置解析"><span class="nav-number">2.</span> <span class="nav-text">2.示例文件及配置解析</span></a></li></ol></div>
-        
       </div>
       <!--/noindex-->
 
@@ -642,6 +641,9 @@
 
 
 <!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div><!-- CloudCalendar -->
 <div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
 	<div class="widget" id="CloudCalendar"></div>
 </div>
@@ -775,6 +777,23 @@
   
 
   
+<!-- calendar widget -->
+
+    <script src=""></script>
+    <script src=""></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:''
+                }
+            )
+        );
+    });
+    </script>
+
 
 
 <script>

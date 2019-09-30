@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":true,"dimmer":true},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。">
+<meta name="keywords" content="zabbix,python,自动化运维">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用zabbix远程执行python脚本">
+<meta property="og:url" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/index.html">
+<meta property="og:site_name" content="NewPants">
+<meta property="og:description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/agent_remote.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/zabbix_get_v.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/zabbix_get.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/triggers.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/create_action.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/create1.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/create2.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/create3.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/create4.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/create5.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/create6.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/report1.png">
+<meta property="og:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/del_log.png">
+<meta property="og:updated_time" content="2019-09-29T06:55:31.859Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用zabbix远程执行python脚本">
+<meta name="twitter:description" content="本文通过zabbix与python结合，实现对服务器上日志自动化的清理。服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。">
+<meta name="twitter:image" content="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/agent_remote.png">
+  <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
+  <link rel="canonical" href="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>利用zabbix远程执行python脚本 | NewPants</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NewPants</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/padimxxx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="未完成">
+      <meta itemprop="description" content="数えた日の夢からさよならが">
+      <meta itemprop="image" content="/images/dogman.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NewPants">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">利用zabbix远程执行python脚本
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-27 10:09:27" itemprop="dateCreated datePublished" datetime="2019-09-27T10:09:27+08:00">2019-09-27</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-29 14:55:31" itemprop="dateModified" datetime="2019-09-29T14:55:31+08:00">2019-09-29</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/zabbix/" itemprop="url" rel="index"><span itemprop="name">zabbix</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span id="/2019/09/27/利用zabbix远程执行python脚本/" class="post-meta-item leancloud_visitors" data-flag-title="利用zabbix远程执行python脚本" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/09/27/利用zabbix远程执行python脚本/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2019/09/27/利用zabbix远程执行python脚本/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>3.6k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文通过zabbix与python结合，实现对服务器上日志自动化的清理。</p><p>服务器其实最基本的问题就是容量的问题，秉承着，能不花钱就不花钱的理念。基本像web服务器，这种基本不占什么容量的服务来说，服务器的容量都很小。所以基本云主机都是买一个容量最小最便宜的放在线上。</p><a id="more"></a>
+
+<p>不过一段时间下来，web产生的大量日志就是一个头疼的问题了。一共就那么几十G，再放上web程序，日志没几天就占满了磁盘空间。这些日志很多都不是那么重要的，基本是记录操作记录的信息，所以时间比较久远的日志参考意义就不大了，而且假如真的需要保存这些信息的话，其实已经可以通过elk采集到我们需要保存的服务器上进行备份。</p>
+<p>该文目录：</p>
+<p>[TOC]</p>
+<h4 id="开启zabbix-agent端远程命令权限"><a href="#开启zabbix-agent端远程命令权限" class="headerlink" title="开启zabbix_agent端远程命令权限"></a>开启zabbix_agent端远程命令权限</h4><p>首先第一步就是要先开启agent端允许server端远程执行命令的权限。找到配置文件，每个人配置文件名称可能不通。我这里是windows主机，名称为：“zabbix_agentd.win.conf”。找到如下图这行：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/agent_remote.png" alt></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#默认0代表关闭，1为启用</span><br><span class="line">EnableRemoteCommands=1</span><br></pre></td></tr></table></figure>
+
+<p>设置保存后，需要<strong>重启</strong>对应的agent端的zabbix服务才会生效。</p>
+<h4 id="zabbix-get验证连通性"><a href="#zabbix-get验证连通性" class="headerlink" title="zabbix_get验证连通性"></a>zabbix_get验证连通性</h4><p>zabbix_get是zabbix官方提供的一个工具。将这个工具安装在server端，即可实现对agent端的数据采集。通过这个工具可以测试我们的配置是否有问题。<a href="https://www.zabbix.com/documentation/3.0/manpages/zabbix_get" target="_blank" rel="noopener">zabbix_get官方文档</a></p>
+<p>如果没有安装该工具，通过yum或者下载镜像方式安装，yum安装：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install -y zabbix-get.x86_64</span><br></pre></td></tr></table></figure>
+
+<p>安装完成后测试是否正常：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/zabbix_get_v.png" alt></p>
+<p>zabbix_get使用方法（直接引用官网文档，点击上面那个链接一样可以看到）：</p>
+<p><strong>zabbix_get -s</strong> <em>host-name-or-IP</em> [<strong>-p</strong> <em>port-number<em>] [*</em>-I** <em>IP-address</em>] <strong>-k</strong> *item-key</em><br><strong>zabbix_get -s</strong> <em>host-name-or-IP</em> [<strong>-p</strong> <em>port-number<em>] [*</em>-I** <em>IP-address</em>] <strong>–tls-connect</strong> <strong>cert</strong> <strong>–tls-ca-file</strong> *CA-file</em> [<strong>–tls-crl-file</strong> <em>CRL-file<em>] [*</em>–tls-agent-cert-issuer** <em>cert-issuer</em>] [<strong>–tls-agent-cert-subject</strong> <em>cert-subject</em>] <strong>–tls-cert-file</strong> *cert-file</em> <strong>–tls-key-file</strong> <em>key-file</em> <strong>-k</strong> <em>item-key</em><br><strong>zabbix_get -s</strong> <em>host-name-or-IP</em> [<strong>-p</strong> <em>port-number<em>] [*</em>-I** <em>IP-address</em>] <strong>–tls-connect</strong> <strong>psk</strong> <strong>–tls-psk-identity</strong> *PSK-identity</em> <strong>–tls-psk-file*</strong>PSK-file* <strong>-k</strong> <em>item-key</em><br><strong>zabbix_get -h</strong><br><strong>zabbix_get -V</strong>  </p>
+<p>我们刚才已经开启了agent端的远程执行功能，现在直接在server端测试一下：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/zabbix_get.png" alt></p>
+<p>这是一个获取所有cpu平均1分钟负载值的命令。看到我们已经返回了结果，证明连通正常，可以远程执行命令。</p>
+<h4 id="编写python脚本"><a href="#编写python脚本" class="headerlink" title="编写python脚本"></a>编写python脚本</h4><p>完成上面两个步骤后，zabbix方面可以先放一放，因为这个才是我们最重要的步骤，编写python脚本。话不多说，直接先上脚本：</p>
+<p><strong>注：本脚本在windows主机，python3的环境下运行。若为python2，脚本中的一些模块可能会运行报错，建议先测试一下正常后再使用。</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># encoding:utf-8</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="string">功能:</span></span><br><span class="line"><span class="string">	1）判断文件/文件夹最后修改日期</span></span><br><span class="line"><span class="string">	2）按照if语句删除（天数作为条件）</span></span><br><span class="line"><span class="string">说明：此脚本由内网40.17zabbix服务器触发触发器执行动作，远程执行</span></span><br><span class="line"><span class="string">	</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> datetime</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line">logging.basicConfig(level=logging.INFO,</span><br><span class="line">                    filename=<span class="string">"C:/python/python_scripts/del_dir.log"</span> </span><br><span class="line">                    <span class="comment">#有了filename参数就不会直接输出显示到控制台，而是直接写入文件</span></span><br><span class="line">                    )</span><br><span class="line"></span><br><span class="line"><span class="comment">#定义删除文件夹的函数 del_directory(),参数my_path</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">del_directory</span><span class="params">(my_path)</span>:</span></span><br><span class="line">	<span class="comment">#定义日期时间格式</span></span><br><span class="line">	format=<span class="string">'%Y-%m-%d'</span></span><br><span class="line">	<span class="comment">#获取当前的时间转换成字符串格式	</span></span><br><span class="line">	current_time=str(time.strftime(format,time.localtime()))</span><br><span class="line">	<span class="comment">#删除时间，方便日志查看</span></span><br><span class="line">	del_time=time.strftime(<span class="string">"%Y-%m-%d %H:%M:%S"</span>,time.localtime())</span><br><span class="line">	<span class="comment">#遍历目标路径下的文件夹</span></span><br><span class="line">	<span class="keyword">for</span> d_f_name <span class="keyword">in</span> os.listdir(my_path):</span><br><span class="line">		<span class="comment">#获取文件绝对路径</span></span><br><span class="line">		full_dirct_path=os.path.join(my_path,d_f_name)</span><br><span class="line">		<span class="comment">#获取文件最后修改时间		</span></span><br><span class="line">		modifiedTime=time.localtime(os.stat(full_dirct_path).st_mtime)</span><br><span class="line">		mTime=str(time.strftime(format,modifiedTime))			</span><br><span class="line">		<span class="comment">#判断修改日期距离今天为止的间隔时间（天）</span></span><br><span class="line">		interval_time=datetime.datetime.strptime(current_time,format) - datetime.datetime.strptime(mTime,format)</span><br><span class="line">		<span class="comment">#判断修改日期距离今天是否大于x天</span></span><br><span class="line">		<span class="keyword">if</span> interval_time.days &gt; <span class="number">5</span>:</span><br><span class="line">			<span class="comment">#判断是否为文件夹</span></span><br><span class="line">			<span class="keyword">if</span> os.path.isdir(full_dirct_path):</span><br><span class="line">				<span class="comment">#删除非空文件夹 注：直接删除整个非空文件夹</span></span><br><span class="line">				shutil.rmtree(full_dirct_path)</span><br><span class="line">				logging.info(del_time+<span class="string">" 已成功删除[目录]: "</span>+full_dirct_path)</span><br><span class="line">			<span class="keyword">else</span>:</span><br><span class="line">				<span class="comment">#删除文件</span></span><br><span class="line">				os.remove(full_dirct_path)</span><br><span class="line">				logging.info(del_time+<span class="string">" 已成功删除_文件_: "</span>+full_dirct_path)</span><br><span class="line"></span><br><span class="line">del_directory(<span class="string">'D:\\wwwlog\\commctrl\\dir1\\'</span>)</span><br><span class="line">del_directory(<span class="string">'D:\\wwwlog\\dir2\\'</span>)</span><br></pre></td></tr></table></figure>
+
+<p>基本上面每一步的作用，我都有在注释里面标注了。主要是运用几个模块，定义了一个删除文件和目录的函数。最后再实例化。</p>
+<p>唯一需要注意的是最下面实例化，添加路径的时候，一定要写对绝对路径，不要删错文件就好。</p>
+<p>编写完毕测试正常后，我们把脚本放在一个目录下，我这里放在“C:/python/python_scripts/del_dir_20.py”</p>
+<h4 id="为触发器添加动作"><a href="#为触发器添加动作" class="headerlink" title="为触发器添加动作"></a>为触发器添加动作</h4><p>首先要在zabbix web的界面建好我们的触发器（我这边已经建好了，是一个D盘容量小于百分之5就触发的报警）：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/triggers.png" alt></p>
+<p>触发器好了以后，我们为触发器添加一个动作，configuration-&gt;Actions-&gt;Event source(选择Triggers)-&gt;Create action。因为我们想要触发触发器后执行脚本，所以创建动作时，选择Triggers。</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/create_action.png" alt></p>
+<p>填入名称，增加触发器：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/create1.png" alt></p>
+<p>选择对应的触发器：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/create2.png" alt></p>
+<p>选择完一定要记得点击“add”，如果没有“add”，触发器是没有添加上去的：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/create3.png" alt></p>
+<p>最后的状态：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/create4.png" alt></p>
+<p>下面也是比较关键的一步，添加我们的动作内容，点击Action旁边的Operations:</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/create5.png" alt></p>
+<p>每步的步骤的作用都有详细说明了，单机图片可放大查看。</p>
+<p>Target list的部分忘记标注了，这里记得新建一个把我们要执行脚本的主机添加进来，选择host-&gt;选择主机：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/create6.png" alt></p>
+<hr>
+<h4 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h4><p>以上一切做好后，就可以静静的等待触发器被触发，自动远程执行我们的python脚本了。</p>
+<p>如果报警触发，我们可以在Reports-&gt;Action log中查看我们的动作详情，我们看到触发器触发后，自动就恢复了，不需要人工参与：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/report1.png" alt></p>
+<p>如果想看什么时间都删除了哪些文件，可以看看在目标服务器上，我们利用python输出的日志内容：</p>
+<p><img src="/2019/09/27/利用zabbix远程执行python脚本/del_log.png" alt></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>未完成</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/" title="利用zabbix远程执行python脚本">http://newpants.top/2019/09/27/利用zabbix远程执行python脚本/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/zabbix/" rel="tag"><i class="fa fa-tag"></i> zabbix</a>
+            
+              <a href="/tags/python/" rel="tag"><i class="fa fa-tag"></i> python</a>
+            
+              <a href="/tags/自动化运维/" rel="tag"><i class="fa fa-tag"></i> 自动化运维</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/09/25/利用性能分析工具sar、iotop对linux服务器高负载问题排查/" rel="next" title="利用性能分析工具sar、iotop对linux服务器高负载问题排查">
+                  <i class="fa fa-chevron-left"></i> 利用性能分析工具sar、iotop对linux服务器高负载问题排查
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/2019/09/29/tinyvpn、tinymapper、ss科学上网/" rel="prev" title="tinyfecvpn、tinyPortmapper、ss科学上网">
+                  tinyfecvpn、tinyPortmapper、ss科学上网 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#开启zabbix-agent端远程命令权限"><span class="nav-number">1.</span> <span class="nav-text">开启zabbix_agent端远程命令权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#zabbix-get验证连通性"><span class="nav-number">2.</span> <span class="nav-text">zabbix_get验证连通性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编写python脚本"><span class="nav-number">3.</span> <span class="nav-text">编写python脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#为触发器添加动作"><span class="nav-number">4.</span> <span class="nav-text">为触发器添加动作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#效果图"><span class="nav-number">5.</span> <span class="nav-text">效果图</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/dogman.png"
+      alt="未完成">
+  <p class="site-author-name" itemprop="name">未完成</p>
+  <div class="site-description" itemprop="description">数えた日の夢からさよならが</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+		
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-gamepad"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">by 未完成</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">32k</span>
+</div>
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+	
+  
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+    
+  
+  <script color='255,215,0' opacity='0.8' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'QtCbeEc6hgQeYVDKrqLE3LQU-gzGzoHsz',
+    appKey: '26hxP9PyUY8g6kFV9HcjVSFI',
+    placeholder: '...',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: true,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname
+  });
+}, window.Valine);
+</script>
+
+<!-- calendar widget -->
+
+    <script src="/lib/calendar/calendar.min.js"></script>
+    <script src="/lib/calendar/languages.min.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:''
+                }
+            )
+        );
+    });
+    </script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/tororo.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>

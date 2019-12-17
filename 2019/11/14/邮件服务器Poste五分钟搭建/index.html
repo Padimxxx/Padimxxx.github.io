@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.3.0">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.3.0">
+  <link rel="mask-icon" href="/images/logo.svg?v=7.3.0" color="#222">
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+<link rel="stylesheet" href="/css/main.css?v=7.3.0">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+  <link rel="stylesheet" href="/lib/pace/pace-theme-loading-bar.min.css?v=1.0.2">
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.3.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"hide","offset":12,"onmobile":true,"dimmer":true},
+    copycode: {"enable":true,"show_result":true,"style":"default"},
+    back2top: {"enable":true,"sidebar":true,"scrollpercent":true},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: true,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: true,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="搭建最省事的自建邮件服务器">
+<meta name="keywords" content="poste">
+<meta property="og:type" content="article">
+<meta property="og:title" content="邮件服务器Poste五分钟搭建">
+<meta property="og:url" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/index.html">
+<meta property="og:site_name" content="NewPants">
+<meta property="og:description" content="搭建最省事的自建邮件服务器">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/DNS2.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/DNS3.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/DNS1.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/DNS4.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/DNS5.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/poste.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/admin.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/first_poste.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/ssl.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/ssl2.png">
+<meta property="og:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/serverstatus.png">
+<meta property="og:updated_time" content="2019-12-17T05:50:51.221Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="邮件服务器Poste五分钟搭建">
+<meta name="twitter:description" content="搭建最省事的自建邮件服务器">
+<meta name="twitter:image" content="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/DNS2.png">
+  <link rel="alternate" href="/atom.xml" title="NewPants" type="application/atom+xml">
+  <link rel="canonical" href="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>邮件服务器Poste五分钟搭建 | NewPants</title>
+  <meta name="generator" content="Hexo 3.9.0">
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">NewPants</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-tags">
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-about">
+      
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a href="javascript:;" class="popup-trigger">
+        
+          <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+      </li>
+    
+  </ul>
+
+    
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+
+  <a href="https://github.com/padimxxx" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+      <article itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block post">
+    <link itemprop="mainEntityOfPage" href="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="未完成">
+      <meta itemprop="description" content="数えた日の夢からさよならが">
+      <meta itemprop="image" content="/images/dogman.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="NewPants">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">邮件服务器Poste五分钟搭建
+
+          
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-11-14 14:23:59" itemprop="dateCreated datePublished" datetime="2019-11-14T14:23:59+08:00">2019-11-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-17 13:50:51" itemprop="dateModified" datetime="2019-12-17T13:50:51+08:00">2019-12-17</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/poste/" itemprop="url" rel="index"><span itemprop="name">poste</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            <span id="/2019/11/14/邮件服务器Poste五分钟搭建/" class="post-meta-item leancloud_visitors" data-flag-title="邮件服务器Poste五分钟搭建" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2019/11/14/邮件服务器Poste五分钟搭建/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/2019/11/14/邮件服务器Poste五分钟搭建/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+          
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">本文字数：</span>
+              
+              <span>4.2k</span>
+            </span>
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>搭建最省事的自建邮件服务器</p><a id="more"></a>
+<!-- toc -->
+
+<ul>
+<li><a href="#dns配置">DNS配置</a><ul>
+<li><a href="#mx">MX</a></li>
+<li><a href="#dmarc">DMARC</a></li>
+<li><a href="#dkim">DKIM</a></li>
+</ul>
+</li>
+<li><a href="#poste">poste</a></li>
+<li><a href="#安装">安装</a><ul>
+<li><a href="#安装docker">安装docker</a></li>
+<li><a href="#安装poste">安装poste</a></li>
+</ul>
+</li>
+<li><a href="#设置">设置</a><ul>
+<li><a href="#设置admin">设置admin</a></li>
+<li><a href="#设置ssl">设置ssl</a></li>
+<li><a href="#查看服务器状态">查看服务器状态</a></li>
+</ul>
+</li>
+<li><a href="#收尾工作">收尾工作</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="dns配置">DNS配置</span></h2><p>我们可以先来配置一下服务器的DNS解析，如果你想搭建好再配置，可以先跳过这里去做下面的。</p>
+<p>配置DNS主要目的是为了让我们可以发出邮件和收到邮件，防止邮件被拒收或者进入垃圾箱被识别成垃圾邮件等。</p>
+<p>举例我们在阿里云上购买的域名newpant.top的配置如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>类型</strong></th>
+<th><strong>主机记录</strong></th>
+<th><strong>记录值</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>mail</td>
+<td>1.1.1.1（服务器物理IP）</td>
+</tr>
+<tr>
+<td>MX</td>
+<td>@</td>
+<td>mail.newpants.top（优先： 10）</td>
+</tr>
+<tr>
+<td>TXT</td>
+<td>@</td>
+<td>v=spf1 mx ~all</td>
+</tr>
+<tr>
+<td>TXT</td>
+<td>_dmarc</td>
+<td>v=DMARC1; p=none; rua=mailto:<a href="mailto:dmarc-reports@newpants.top" target="_blank" rel="noopener">dmarc-reports@newpants.top</a></td>
+</tr>
+<tr>
+<td>TXT</td>
+<td>s20191113264._domainkey</td>
+<td>k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArR+ADc3V0lCzoBX9tNCsCV7McxM5GzpoggmbRmhn2LZS6tnZm12TBCtq6PIQiUsmlCjqEXEXPtu3iMH02k8VogQMHCpt243awYLOUEb4Q+P4BLURkIC/spF13bg6l+O6oOpGdYVFEZw1ydjQlDl9Nouil17l1tKM5FUtpHFn7gX7iiPvqys5ZQ2nN5Fl2LrsqXHX3wihXlFUAVx4XQ7gfPN2sRz3d15TZ0zzSzh8Ylqc96oB481oSiZ+vgFc1tafsOSef4ODuJTacQhOGRWxNqfsZoNencq8b9TV2fDQTzujeM2ylFX6jf9LbKE1iL+c5qb81tggN/hLrA+g2/LG6wIDAQAB</td>
+</tr>
+</tbody></table>
+<p>A记录让域名<code>mail.newpants.top</code>指向主机<code>IP地址</code>，这样我们访问<code>mail.newpants.top</code>就访问到相应的服务器上了。</p>
+<p>1.MX记录记录邮箱的域，指向<code>mail.newpants.top</code>，让我们发送的邮件可以找到服务器的地址。</p>
+<p>然后接下来三个按照顺序分别是：SPF、DMARC、DKIM</p>
+<p>2.SPF按照 mx ~all 设定即可。</p>
+<p>3.dmarc前面的几个参数有特定的寓意，这里就用比较常用的几个参数设定，详细可以百度查看，注意最后的<code>dmarc-reports@newpants.top</code>部分，如下图，打开poste的 管理员界面 → system settings → spam&amp;virus checks → DMARC，替换成你自己的一个邮箱（只要该邮箱可以正常收发邮件就可以了，可以直接在poste里面建一个用户用来代替这里的邮箱）：</p>
+<p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/DNS2.png" alt></p>
+<p>4.DKIM也打开 管理员界面 → Virtual domains → 找到你的域名 → DKIM key → 生成 DKIM → 复制 IN TXT 后面的内容加到DNS解析上面去。</p>
+<p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/DNS3.png" alt></p>
+<p><strong>可以参考链接：<a href="https://www.331u.com/540.html" target="_blank" rel="noopener">邮件服务器DNS配置</a></strong></p>
+<p>以下转载原文，注意几点：</p>
+<h4><span id="mx">MX</span></h4><p>MX解析记录是邮件交换记录（邮件路由记录），主要是用来定位邮件服务器的，只要配置过企业邮箱的朋友应该都清楚，配置也没有难点。</p>
+<p>举个例子：</p>
+<p><code>usebsd.com</code>这个域名，咱们做了一个<code>@</code>的<code>CName</code>解析，指向了<code>www.usebsd.com</code>。</p>
+<p>然后又继续增加一个<code>MX</code>解析记录，<code>@</code>指向了<code>mx.usebsd.com</code>。</p>
+<p>那最终的结果会怎样呢？那就是很可能在解析的时候，那一条<code>MX</code>解析记录会被<code>CName</code>解析记录给盖掉，就会造成邮件丢信等情况。</p>
+<p>检查域名MX解析是否正确：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nslookup -qt=MX domain.com</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/DNS1.png" alt></p>
+<h4><span id="dmarc">DMARC</span></h4><p>DMARC是<code>Domain-based Message Authentication, Reporting &amp; Conformance</code>的缩写，是一种基于现有的SPF和DKIM协议的可扩展电子邮件认证协议，其核心思想是邮件的发送方通过特定方式（DNS）公开表明自己会用到的发件服务器（SPF）、并对发出的邮件内容进行签名(DKIM)，而邮件的接收方则检查收到的邮件是否来自发送方授权过的服务器并核对签名是否有效。对于未通过前述检查的邮件，接收方则按照发送方指定的策略进行处理，如直接投入垃圾箱或拒收。从而有效识别并拦截欺诈邮件和钓鱼邮件，保障用户个人信息安全。</p>
+<p>然后再为邮箱服务器配置一个域名就大功告成了，试一下给QQ或者Gmail发送邮件吧。</p>
+<p>有一定概率会被当成垃圾邮件，而发送到垃圾箱里，这个还得回头看一下，不过说实话这么方便的邮件服务器已经很好了，方便省事才是我们的终极理念。</p>
+<p>检查DMARC记录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nslookup -qt=TXT _dmarc.domain.com</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/DNS4.png" alt></p>
+<h4><span id="dkim">DKIM</span></h4><p>DKIM是<code>DomainKeys Identified Mail</code>的缩写，和SPF一样，是为了解决最为严重的电子邮件欺诈问题。但和SPF不一样的是，DKIM是对邮件内容进行验证，而SPF是对信封进行认证。</p>
+<p>DKIM是目前最流行的用来解决邮件欺诈的方案，它的具体做法是生成一对公钥和私钥，私钥由发送者保存，公钥存放在From字段指定域名的TXT记录中。邮件发送时，用私钥加密邮件头的某些字段，并附上邮件内容的HASH值，让用户收到邮件时，查找此原来的公钥，对加密的内容进行解密。</p>
+<p>当收到一封邮件后，支持DKIM的服务商就会查询TXT记录，从中找到公钥，用以验证此邮件是否的确是该邮件服务器所发出的。</p>
+<p>检查DKIM记录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nslookup -qt=TXT xxxx._domainkey.domain.com</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/DNS5.png" alt></p>
+<p>图中检测的域就是上面我们提到在poste管理员界面那里生成DKIM钥匙那里显示的那个名称。如果txt显示正确，且下方的域名也正确显示就可以了。</p>
+<h2><span id="poste">poste</span></h2><p>最近在选择自建邮件服务器的种类，考察了几款，<code>iredmail、EwoMail、mailcow</code>等。<code>iredmail</code>和<code>EwoMail</code>都是国人做的，全中文，但是安装比较麻烦，必须使用全新的操作系统，因为这两种是直接跑脚本在你服务器上部署，服务器上不能安装过<code>nginx，mysql</code>等等。如果要重新安装要重装操作系统….实在难以接受。</p>
+<p>最后考察了<code>mailcow</code>和<code>poste</code>。都是支持docker部署的，这样就对之前系统的环境要求不高了。</p>
+<p><a href="https://www.poste.io/doc/configuring-dns" target="_blank" rel="noopener">poste官方文档</a></p>
+<p><code>mailcow</code>和<code>poste</code>其实几乎差不太多。<code>poste</code>更轻量，占用内存在<code>800 MB</code>左右，分为<code>免费版</code>和<code>付费版</code>，基本上免费版已经可以满足我们的需求了。就是用户界面丑了一点：</p>
+<p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/poste.png" alt></p>
+<p>用户界面支持多语言，可以选择中文满足我们的需求。</p>
+<p>后台界面还是不错的，只能是全英文界面：</p>
+<p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/admin.png" alt></p>
+<h2><span id="安装">安装</span></h2><h4><span id="安装docker">安装docker</span></h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">CentOS 6</span></span><br><span class="line"></span><br><span class="line">[root@localhost ~]#rpm -iUvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm</span><br><span class="line"></span><br><span class="line">[root@localhost ~]#yum update -y</span><br><span class="line"></span><br><span class="line">[root@localhost ~]#yum -y install docker-io</span><br><span class="line"></span><br><span class="line">[root@localhost ~]#service docker start</span><br><span class="line"></span><br><span class="line">[root@localhost ~]#chkconfig docker on</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">CentOS 7、Debian、Ubuntu</span></span><br><span class="line"></span><br><span class="line">[root@localhost ~]#curl -sSL https://get.docker.com/ | sh</span><br><span class="line"></span><br><span class="line">[root@localhost ~]#systemctl start docker</span><br><span class="line"></span><br><span class="line">[root@localhost ~]#systemctl enable docker.service</span><br></pre></td></tr></table></figure>
+
+<h4><span id="安装poste">安装poste</span></h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">docker run  \</span><br><span class="line">    -p 25:25 \</span><br><span class="line">    -p 80:80 \</span><br><span class="line">    -p 110:110 \</span><br><span class="line">    -p 143:143 \</span><br><span class="line">    -p 443:443 \</span><br><span class="line">    -p 587:587 \</span><br><span class="line">    -p 993:993 \</span><br><span class="line">    -p 995:995 \</span><br><span class="line">    -v /etc/localtime:/etc/localtime:ro \</span><br><span class="line">    -v /data/poste/data:/data \</span><br><span class="line">    --name "your email name" \</span><br><span class="line">    -h "your domains " \</span><br><span class="line">    -t analogic/poste.io</span><br></pre></td></tr></table></figure>
+
+<p>1、/data/poste/data ：是我服务器上数据储存路径，按照实际情况修改到一个大的目录下</p>
+<p>2、–name “your email name” ：容器的名称，方便就好</p>
+<p>3、-h “your domains “ ：改成你的邮件服务器域名</p>
+<p>4、-t analogic/poste.io ： docker hub 上的镜像名，先会在本地寻找，没有就远程拉取</p>
+<p>5、上面一大堆的 “-p” 就是映射端口号了</p>
+<p>运行完没错，用命令 “ docker ps “ 查看，应该就可以看到刚添加的 email 容器了。</p>
+<p>然后更新一下容器，让容器实现开机自启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]#docker update --restart=always 容器ID或者name</span><br></pre></td></tr></table></figure>
+
+<p>这时候就可以通过你的邮件服务器设定的域名访问页面了，如果你还没有设置域名和 DNS 等，可以先通过IP访问，设定好了再通过域名访问并且添加SSL。</p>
+<h2><span id="设置">设置</span></h2><h4><span id="设置admin">设置admin</span></h4><p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/first_poste.png" alt></p>
+<h4><span id="设置ssl">设置ssl</span></h4><p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/ssl.png" alt></p>
+<p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/ssl2.png" alt></p>
+<p>等一会就可以了。</p>
+<h4><span id="查看服务器状态">查看服务器状态</span></h4><p><img src="/2019/11/14/邮件服务器Poste五分钟搭建/serverstatus.png" alt></p>
+<p>全部绿色就没啥问题了。其实只要<code>25端口</code>是通的，就可以发送邮件了。</p>
+<p>然后剩下就可以添加账户之类的，其他功能可以慢慢摸索了，基本就这样差不多了。</p>
+<h2><span id="收尾工作">收尾工作</span></h2><p>如果不出意外的话，已经可以正常收发邮件了。这里提供一个可以测试邮件得分的网站（<code>限额3次免费</code>，但是只是限制IP，换了IP一样可以测试）</p>
+<p><a href="https://www.mail-tester.com/" target="_blank" rel="noopener">https://www.mail-tester.com/</a></p>
+<p>有问题里面也可以看得到，基本上6分以上，就可以正常收发邮件，并且不会进入垃圾箱了。</p>
+<p>部署上应该没有大问题，主要还是DNS配置会出现一些问题，把DNS配置好，多测试测试，应该就可以了。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>未完成</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/" title="邮件服务器Poste五分钟搭建">https://newpants_top/2019/11/14/邮件服务器Poste五分钟搭建/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+          
+            
+          
+          <div class="post-tags">
+            
+              <a href="/tags/poste/" rel="tag"><i class="fa fa-tag"></i> poste</a>
+            
+          </div>
+        
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/2019/11/05/shell脚本汇总/" rel="next" title="shell脚本汇总">
+                  <i class="fa fa-chevron-left"></i> shell脚本汇总
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </div>
+  
+  
+  
+  </article>
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/images/dogman.png"
+      alt="未完成">
+  <p class="site-author-name" itemprop="name">未完成</p>
+  <div class="site-description" itemprop="description">数えた日の夢からさよならが</div>
+</div>
+  <nav class="site-state motion-element">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags/">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+  <div class="feed-link motion-element">
+    <a href="/atom.xml" rel="alternate">
+      <i class="fa fa-rss"></i>RSS
+    </a>
+  </div>
+
+
+<!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div><!-- CloudCalendar -->
+<div class="widget-wrap" style="width: 90%;margin-left: auto;margin-right: auto; opacity: 0.97;">
+	<div class="widget" id="CloudCalendar"></div>
+</div>
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+		
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-gamepad"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">by 未完成</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">63k</span>
+</div>
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+    <span class="post-meta-divider">|</span>
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+	
+  
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+
+
+    
+  
+  <script color='255,215,0' opacity='0.8' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/pangu@4/dist/browser/pangu.min.js"></script>
+<script src="/js/utils.js?v=7.3.0"></script><script src="/js/motion.js?v=7.3.0"></script>
+<script src="/js/schemes/muse.js?v=7.3.0"></script>
+
+<script src="/js/next-boot.js?v=7.3.0"></script>
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  <script src="/js/local-search.js?v=7.3.0"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+<!-- calendar widget -->
+
+    <script src=""></script>
+    <script src=""></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:''
+                }
+            )
+        );
+    });
+    </script>
+
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'QtCbeEc6hgQeYVDKrqLE3LQU-gzGzoHsz',
+    appKey: '26hxP9PyUY8g6kFV9HcjVSFI',
+    placeholder: '...',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: true,
+    lang: 'zh-cn' || 'zh-cn',
+    path: location.pathname
+  });
+}, window.Valine);
+</script>
+
+<!-- calendar widget -->
+
+    <script src="/lib/calendar/calendar.min.js"></script>
+    <script src="/lib/calendar/languages.min.js"></script>
+    <script type="text/javascript">
+    $(function() {
+        $('#CloudCalendar').aCalendar('zh-CN',
+            $.extend(
+                '', {
+                    single:true,
+                    root:''
+                }
+            )
+        );
+    });
+    </script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/tororo.model.json"},"display":{"position":"left","width":150,"height":300},"mobile":{"show":true},"react":{"opacity":0.7}});</script></body>
+</html>
